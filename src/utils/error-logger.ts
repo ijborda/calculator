@@ -1,6 +1,6 @@
 'use client';
 
-import { UIError } from './UIError';
+import { UIError } from './ui-error';
 
 class ErrorLogger {
   async call<T>(fn: (...args: any[]) => Promise<T>) {

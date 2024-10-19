@@ -1,6 +1,6 @@
 import axios, { AxiosError, type AxiosInstance, AxiosResponse } from 'axios';
 import { config } from '@/configs/config';
-import { UIError } from './UIError';
+import { UIError } from './ui-error';
 
 class OwnedApi {
   constructor() {}

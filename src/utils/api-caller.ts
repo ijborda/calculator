@@ -1,7 +1,7 @@
 'use client';
 
 import { Constants } from '@/constants/constants';
-import { toaster } from './Toaster';
+import { toaster } from './toaster';
 
 class ApiCaller {
   async call<T>(
