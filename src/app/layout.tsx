@@ -12,6 +12,8 @@ import '@fontsource/roboto/700.css';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { ToastContainer } from '@/components';
+import { Navigation } from '@/widgets';
+import { sidebarItems } from '@/constants/sidebars';
 
 export default function RootLayout({
   children,
@@ -30,7 +32,7 @@ export default function RootLayout({
               {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
               <CssBaseline />
               <ToastContainer />
-              {children}
+              <Navigation sidebarLinks={sidebarItems}>{children}</Navigation>
             </ThemeProvider>
           </AppRouterCacheProvider>
         </LocalizationProvider>
