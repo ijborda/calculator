@@ -20,7 +20,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import Name from '@/widgets/Navigation/Name';
-import { Constants } from '@/constants';
+import { Constants } from '@/constants/constants';
 import { SecondaryTitle } from '@/components';
 import { Tooltip } from '@mui/material';
 
