@@ -1,0 +1,8 @@
+:root {
+	--primary-white: #eaeaea;
+}
+
+html,
+body {
+	background-color: var(--primary-white);
+}

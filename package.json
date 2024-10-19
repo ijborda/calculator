@@ -1,0 +1,46 @@
+{
+  "name": "dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@aws-amplify/auth": "^6.0.20",
+    "@aws-amplify/core": "^6.0.20",
+    "@emotion/cache": "^11.11.0",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
+    "@mui/icons-material": "^5.15.10",
+    "@mui/lab": "^5.0.0-alpha.165",
+    "@mui/material": "^5.15.10",
+    "@mui/material-nextjs": "^5.15.11",
+    "@mui/x-data-grid": "^6.19.5",
+    "@mui/x-date-pickers": "^6.19.6",
+    "aws-amplify": "^6.0.20",
+    "axios": "^1.6.8",
+    "chart.js": "^4.4.2",
+    "cookies-next": "^4.1.1",
+    "jotai": "^2.7.1",
+    "moment": "^2.30.1",
+    "mui-one-time-password-input": "^2.0.2",
+    "next": "14.1.0",
+    "react": "^18",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18",
+    "react-qr-code": "^2.0.12",
+    "react-toastify": "^10.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0",
+    "typescript": "^5"
+  }
+}
