@@ -1,7 +1,7 @@
 'use client';
 
 import { Constants } from '@/constants/constants';
-import { auth, toaster } from '.';
+import { toaster } from './Toaster';
 
 class ApiCaller {
   async call<T>(
@@ -16,16 +16,6 @@ class ApiCaller {
         toaster.error(
           err instanceof Error ? err.message : Constants.DEFAULT_ERROR_MESSAGE
         );
-      }
-      // If authentication error, logout user
-      if (err instanceof Error) {
-        if (
-          err.name === 'UserUnAuthenticatedException' ||
-          err.name === 'UserNotFoundException'
-        ) {
-          await auth.logout();
-          window.location.replace('/login');
-        }
       }
       // Throw error as is to error logger
       throw err;

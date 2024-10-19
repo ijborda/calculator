@@ -1,7 +1,7 @@
 'use client';
 
 import { Skeleton, StackVertical } from '@/components';
-import { errorLogger } from '@/libs';
+import { errorLogger } from '@/libs/ErrorLogger';
 import React from 'react';
 
 /**
