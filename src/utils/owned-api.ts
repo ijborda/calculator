@@ -2,7 +2,7 @@ import axios, { AxiosError, type AxiosInstance, AxiosResponse } from 'axios';
 import { config } from '@/configs/config';
 import { UIError } from './ui-error';
 
-class OwnedApi {
+class Request {
   constructor() {}
 
   create(): AxiosInstance {
@@ -41,4 +41,4 @@ class OwnedApi {
   }
 }
 
-export const ownedApi = new OwnedApi().create();
+export const request = new Request().create();

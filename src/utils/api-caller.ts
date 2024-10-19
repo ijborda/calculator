@@ -3,7 +3,7 @@
 import { Constants } from '@/constants/constants';
 import { toaster } from './toaster';
 
-class ApiCaller {
+class RequestUtil {
   async call<T>(
     fn: (...args: any[]) => Promise<T>,
     options: { showToast: boolean } = { showToast: true }
@@ -23,4 +23,4 @@ class ApiCaller {
   }
 }
 
-export const apiCaller = new ApiCaller();
+export const request = new RequestUtil();

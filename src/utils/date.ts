@@ -1,4 +1,4 @@
-export class DateLib {
+export class DateUtil {
   static getMonths = () => {
     return [
       'January',
@@ -22,7 +22,7 @@ export class DateLib {
 
     // Extract year, month, date, hours, and minutes
     const year = date.getFullYear();
-    const month = DateLib.getMonths()[date.getMonth()];
+    const month = DateUtil.getMonths()[date.getMonth()];
     const day = date.getDate();
     const hours = date.getHours();
     const minutes = date.getMinutes();

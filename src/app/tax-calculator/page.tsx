@@ -1,7 +1,7 @@
 'use client';
 
 import { Skeleton, StackVertical } from '@/components';
-import { errorLogger } from '@/utils/error-logger';
+import { logger } from '@/utils/logger';
 import React from 'react';
 
 /**
@@ -23,7 +23,7 @@ export default function Page() {
   React.useEffect(() => {
     // Fetch announcements
     const fn = async () => {
-      await errorLogger.call(async () => {
+      await logger.call(async () => {
         if (ignore) return;
         setIsReady(true);
       });

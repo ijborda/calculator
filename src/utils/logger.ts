@@ -2,7 +2,7 @@
 
 import { UIError } from './ui-error';
 
-class ErrorLogger {
+class Logger {
   async call<T>(fn: (...args: any[]) => Promise<T>) {
     try {
       return await fn();
@@ -15,4 +15,4 @@ class ErrorLogger {
   }
 }
 
-export const errorLogger = new ErrorLogger();
+export const logger = new Logger();
