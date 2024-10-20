@@ -2,6 +2,7 @@
 
 import { Paper, Skeleton, StackVertical, Link } from '@/components';
 import { logger } from '@/utils/logger';
+import { Height } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import React from 'react';
 
@@ -38,13 +39,27 @@ export default function Page() {
   const mainComp = (
     <StackVertical horizontalSpacing='stretch' spacing={3}>
       <Paper>
-        <Typography>
-          Noticed something wrong? Want to request another calculator or tool to
-          be created?{' '}
-          <Link href='mailto:imari.borda2018@gmail.com'>
-            Let me know via email
-          </Link>
-        </Typography>
+        <StackVertical spacing={5}>
+          <Typography>
+            Noticed something wrong? Want to request another calculator or tool
+            to be created?{' '}
+            <Link href='mailto:imari.borda2018@gmail.com'>
+              Let me know via email
+            </Link>
+          </Typography>
+          <div>
+            <StackVertical spacing={1.5}>
+              <Typography>Want to support?</Typography>
+              <a href='https://www.buymeacoffee.com/ijborda' target='_blank'>
+                <img
+                  src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png'
+                  alt='Buy Me A Coffee'
+                  width={200}
+                />
+              </a>
+            </StackVertical>
+          </div>
+        </StackVertical>
       </Paper>
     </StackVertical>
   );
