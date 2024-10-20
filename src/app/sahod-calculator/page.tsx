@@ -189,7 +189,7 @@ export default function Page() {
     <StackVertical horizontalSpacing='stretch' spacing={3}>
       <Paper>
         <StackVertical horizontalSpacing='center' spacing={5}>
-          <SecondaryTitle title='Tax Calculator' />
+          <SecondaryTitle title='Sahod Calculator' />
           {input}
           {output}
         </StackVertical>
