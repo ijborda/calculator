@@ -22,16 +22,21 @@ import { getHelpLink } from '@/helpers/sahod-calculator/help-links';
 import { TaxCalculator } from '@/helpers/sahod-calculator/tax-calculator';
 import { RESULT_ATTRIBUTES } from '@/constants/sahod-calculator/results';
 import { reducer } from '@/helpers/sahod-calculator/result-reducer';
-import { PAYROLL_PERIOD } from '@/constants/sahod-calculator/payroll-period';
+import {
+  PAYROLL_PERIOD,
+  payrollPeriodOptions,
+} from '@/constants/sahod-calculator/payroll-period';
 
-/**
- * Head Page
- */
 export default function Page() {
+  /**
+   * Constants
+   */
+  const { INCOME_TAX, TAXABLE_INCOME, NET_INCOME } = RESULT_ATTRIBUTES;
+  const { ANNUAL } = PAYROLL_PERIOD;
+
   /**
    * Data
    */
-  const { INCOME_TAX, TAXABLE_INCOME, NET_INCOME } = RESULT_ATTRIBUTES;
   const initialResults: IResult[] = [
     {
       name: TAXABLE_INCOME,
@@ -58,6 +63,7 @@ export default function Page() {
   const [isCalculating, setIsCalculating] = React.useState(false);
 
   const [annualTaxableIncome, setAnnualTaxableIncome] = React.useState(0);
+  const [payrollPeriod, setPayrollPeriod] = React.useState(ANNUAL);
   const [results, setResults] = React.useReducer(reducer, initialResults);
 
   /**
@@ -92,12 +98,12 @@ export default function Page() {
     setIsCalculating(true);
     await sleep(500);
     // Compute and set results
-    const taxCalculator = new TaxCalculator(annualTaxableIncome);
+    const taxCalculator = new TaxCalculator(annualTaxableIncome, payrollPeriod);
     setResults([
       {
         name: TAXABLE_INCOME,
-        value: formatPhpCurrency(taxCalculator.taxableIncome),
-        explanation: taxCalculator.taxableIncomeExplanation,
+        value: formatPhpCurrency(taxCalculator.totalTaxableIncome),
+        explanation: taxCalculator.totalTaxableIncomeExplanation,
       },
       {
         name: INCOME_TAX,
@@ -153,20 +159,11 @@ export default function Page() {
         <TextFieldSelect
           label='Payroll Period'
           defaultValue='annual'
-          options={[
-            {
-              value: PAYROLL_PERIOD.SEMI_MONTLY,
-              label: 'Semi Monthly',
-            },
-            {
-              value: PAYROLL_PERIOD.MONTHLY,
-              label: 'Monthly',
-            },
-            {
-              value: PAYROLL_PERIOD.ANNUAL,
-              label: 'Annual',
-            },
-          ]}
+          value={payrollPeriod}
+          options={payrollPeriodOptions}
+          onChange={(e) => {
+            setPayrollPeriod(e.target.value as unknown as PAYROLL_PERIOD);
+          }}
         ></TextFieldSelect>
         <TextField
           label='Taxable Income'
