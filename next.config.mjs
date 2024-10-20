@@ -3,14 +3,15 @@ const nextConfig = {
   experimental: {
     missingSuspenseWithCSRBailout: false,
   },
+  basePath: '',
   reactStrictMode: true,
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'cdn.buymeacoffee.com',
-        pathname: '/buttons/v2/**',
-        reactStrictMode: true,
+        port: '',
+        pathname: '/**/**/**',
       },
     ],
   },
