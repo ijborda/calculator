@@ -1,8 +1,7 @@
 'use client';
 
-import { Paper, Skeleton, StackVertical, Link } from '@/components';
+import { Paper, Skeleton, StackVertical, Link, Image } from '@/components';
 import { logger } from '@/utils/logger';
-import { Height } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import React from 'react';
 
@@ -50,13 +49,14 @@ export default function Page() {
           <div>
             <StackVertical spacing={1.5}>
               <Typography>Want to support?</Typography>
-              <a href='https://www.buymeacoffee.com/ijborda' target='_blank'>
-                <img
+              <Link href='https://www.buymeacoffee.com/ijborda'>
+                <Image
                   src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png'
                   alt='Buy Me A Coffee'
                   width={200}
+                  aspectRatio={545 / 152}
                 />
-              </a>
+              </Link>
             </StackVertical>
           </div>
         </StackVertical>
