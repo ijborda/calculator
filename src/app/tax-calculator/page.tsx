@@ -10,7 +10,7 @@ import {
   TextField,
 } from '@/components';
 import { logger } from '@/utils/logger';
-import React from 'react';
+import React, { EventHandler } from 'react';
 
 /**
  * Head Page
@@ -24,6 +24,11 @@ export default function Page() {
    * States
    */
   const [isReady, setIsReady] = React.useState(false);
+  const [annualTaxableIncome, setAnnualTaxableIncome] = React.useState(0);
+
+  /**
+   * Functions
+   */
 
   /**
    * Side effects
@@ -52,7 +57,17 @@ export default function Page() {
         <StackVertical horizontalSpacing='center' spacing={5}>
           <SecondaryTitle title='Tax Calculator' />
           <StackHorizontal>
-            <TextField label='Annual Taxable Income' prefix='₱'></TextField>
+            <TextField
+              label='Annual Taxable Income'
+              prefix='₱'
+              value={annualTaxableIncome}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const val = Number(e.target.value);
+                if (val) {
+                  setAnnualTaxableIncome(val);
+                }
+              }}
+            ></TextField>
           </StackHorizontal>
           <Button>Calculate</Button>
         </StackVertical>
