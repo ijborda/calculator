@@ -95,6 +95,7 @@ export default function Page() {
       {
         name: TAXABLE_INCOME,
         value: formatPhpCurrency(taxCalculator.taxableIncome),
+        explanation: taxCalculator.taxableIncomeExplanation,
       },
       {
         name: INCOME_TAX,

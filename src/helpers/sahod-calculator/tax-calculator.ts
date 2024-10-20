@@ -15,20 +15,26 @@ export class TaxCalculator {
   private excess: number;
 
   // Outputs
+  private _taxableIncomeExplanation: string;
   private _incomeTax: number;
   private _incomeTaxExplanation: string;
   private _netPay: number;
   private _netPayExplanation: string;
 
   constructor(taxableIncome: number) {
-    this.taxableIncome = taxableIncome;
     this.taxBracket = this.getTaxBracket();
     this.excessOver = this.taxBracket.bounds.inclusiveLower - 1;
     this.excess = taxableIncome - this.excessOver;
+    this.taxableIncome = taxableIncome;
+    this._taxableIncomeExplanation = this.getTaxableIncomeExplanation();
     this._incomeTax = this.getIncomeTax();
     this._incomeTaxExplanation = this.getIncomeTaxExplanation();
     this._netPay = this.getNetPay();
     this._netPayExplanation = this.getNetPayExaplanation();
+  }
+
+  public get taxableIncomeExplanation() {
+    return this._taxableIncomeExplanation;
   }
 
   public get incomeTax() {
@@ -80,6 +86,15 @@ export class TaxCalculator {
       fmtNetPay,
     };
   };
+
+  private getTaxableIncomeExplanation() {
+    const { fmtTaxableIncome } = this.getfmtValues();
+    return `
+      Your taxable income is ${fmtTaxableIncome} which is what you entered.
+      This is your gross pay after deducting all government mandated benefits
+      such as SSS, Pag-Ibig, and Philhealt.
+    `;
+  }
 
   private getIncomeTax() {
     const { fixedTax, excessTaxRate } = this.taxBracket;
@@ -156,8 +171,8 @@ export class TaxCalculator {
   private getNetPayExaplanation() {
     const { fmtTaxableIncome, fmtNetPay, fmtIncomeTax } = this.getfmtValues();
     return `
-      Your gross pay is ${fmtTaxableIncome} and your income tax is ${fmtIncomeTax}.
-      Then your net pay is ${fmtTaxableIncome} - ${fmtIncomeTax} = ${fmtNetPay}.
+      Your taxable income is ${fmtTaxableIncome} and your income tax is ${fmtIncomeTax}.
+      Then your net income is ${fmtTaxableIncome} - ${fmtIncomeTax} = ${fmtNetPay}.
     `;
   }
 }
