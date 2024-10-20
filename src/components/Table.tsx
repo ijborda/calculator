@@ -55,6 +55,21 @@ export default function Component(props: Props & DataGridProps): ReactElement {
         editMode={props.rowEditable ? 'row' : undefined}
         processRowUpdate={props.processRowUpdate}
         apiRef={props.apiRef}
+        sx={
+          props.autoHeght
+            ? {
+                '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': {
+                  py: '8px',
+                },
+                '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
+                  py: '15px',
+                },
+                '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
+                  py: '22px',
+                },
+              }
+            : undefined
+        }
       />
     </Box>
   );
