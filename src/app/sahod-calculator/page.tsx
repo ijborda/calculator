@@ -16,7 +16,7 @@ import { initialLoad, sleep } from '@/helpers/utility';
 import theme from '@/theme';
 import { formatPhpCurrency } from '@/utils/currency';
 import React from 'react';
-import { IResult } from '../interface/tax-calculator/results';
+import { IResult } from '../../interfaces/sahod-calculator/results';
 import { RESULT_ATTRIBUTES } from '@/constants/sahod-calculator/attributes';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { getHelpLink } from '@/helpers/sahod-calculator/help-links';
