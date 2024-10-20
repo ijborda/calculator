@@ -1,10 +1,10 @@
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
-import GradeRoundedIcon from '@mui/icons-material/GradeRounded';
+import CalculateIcon from '@mui/icons-material/Calculate';
 
 export const sidebarItems = [
   {
     text: 'Tax Calculator',
-    icon: <GradeRoundedIcon />,
+    icon: <CalculateIcon />,
     link: '/calculator/tax',
   },
   {
