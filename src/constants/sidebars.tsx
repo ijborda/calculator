@@ -8,8 +8,8 @@ export const sidebarItems = [
     link: '/tax-calculator',
   },
   {
-    text: 'Support',
+    text: 'Contact',
     icon: <PersonRoundedIcon />,
-    link: '/support',
+    link: '/contact',
   },
 ];
