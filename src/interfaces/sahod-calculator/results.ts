@@ -1,4 +1,4 @@
-import { RESULT_ATTRIBUTES } from '@/constants/tax-calculator/attributes';
+import { RESULT_ATTRIBUTES } from '@/constants/sahod-calculator/attributes';
 
 /*
  * Basic form of tax result

@@ -1,4 +1,4 @@
-import { IResult, IResultUpdate } from '@/app/interface/tax-calculator/data';
+import { IResult, IResultUpdate } from '@/interfaces/sahod-calculator/results';
 
 /*
  * Update results with new values

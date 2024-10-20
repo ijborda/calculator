@@ -3,9 +3,9 @@ import CalculateIcon from '@mui/icons-material/Calculate';
 
 export const sidebarItems = [
   {
-    text: 'Tax Calculator',
+    text: 'Sahod Calculator',
     icon: <CalculateIcon />,
-    link: '/tax-calculator',
+    link: '/sahod-calculator',
   },
   {
     text: 'Contact',
