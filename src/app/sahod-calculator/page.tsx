@@ -31,7 +31,8 @@ export default function Page() {
   /**
    * Constants
    */
-  const { INCOME_TAX, TAXABLE_INCOME, NET_INCOME } = RESULT_ATTRIBUTES;
+  const { ANNUAL_INCOME_TAX, ANNUAL_TAXABLE_INCOME, ANNUAL_NET_INCOME } =
+    RESULT_ATTRIBUTES;
   const { ANNUAL } = PAYROLL_PERIOD;
 
   /**
@@ -39,17 +40,17 @@ export default function Page() {
    */
   const initialResults: IResult[] = [
     {
-      name: TAXABLE_INCOME,
+      name: ANNUAL_TAXABLE_INCOME,
       value: '',
       explanation: '-',
     },
     {
-      name: INCOME_TAX,
+      name: ANNUAL_INCOME_TAX,
       value: '',
       explanation: '-',
     },
     {
-      name: NET_INCOME,
+      name: ANNUAL_NET_INCOME,
       value: '',
       explanation: '-',
     },
@@ -101,19 +102,19 @@ export default function Page() {
     const taxCalculator = new TaxCalculator(annualTaxableIncome, payrollPeriod);
     setResults([
       {
-        name: TAXABLE_INCOME,
-        value: formatPhpCurrency(taxCalculator.totalTaxableIncome),
-        explanation: taxCalculator.totalTaxableIncomeExplanation,
+        name: ANNUAL_TAXABLE_INCOME,
+        value: formatPhpCurrency(taxCalculator.annualTaxableIncome),
+        explanation: taxCalculator.annualTaxableIncomeExplanation,
       },
       {
-        name: INCOME_TAX,
-        value: formatPhpCurrency(taxCalculator.incomeTax),
-        explanation: taxCalculator.incomeTaxExplanation,
+        name: ANNUAL_INCOME_TAX,
+        value: formatPhpCurrency(taxCalculator.annualIncomeTax),
+        explanation: taxCalculator.annualIncomeTaxExplanation,
       },
       {
-        name: NET_INCOME,
-        value: formatPhpCurrency(taxCalculator.netIncome),
-        explanation: taxCalculator.netIncomeExplanation,
+        name: ANNUAL_NET_INCOME,
+        value: formatPhpCurrency(taxCalculator.annualNetIncome),
+        explanation: taxCalculator.annualNetIncomeExplanation,
       },
     ]);
     // Wrapup computation
@@ -158,7 +159,6 @@ export default function Page() {
       <StackHorizontal spacing={3}>
         <TextFieldSelect
           label='Payroll Period'
-          defaultValue='annual'
           value={payrollPeriod}
           options={payrollPeriodOptions}
           onChange={(e) => {
@@ -166,7 +166,7 @@ export default function Page() {
           }}
         ></TextFieldSelect>
         <TextField
-          label='Taxable Income'
+          label='Taxable Income for the Period'
           prefix='₱'
           value={annualTaxableIncome}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,5 +1,5 @@
 export enum RESULT_ATTRIBUTES {
-  TAXABLE_INCOME = 'Taxable Income',
-  INCOME_TAX = 'Income Tax',
-  NET_INCOME = 'Net Income',
+  ANNUAL_TAXABLE_INCOME = 'Annual Taxable Income',
+  ANNUAL_INCOME_TAX = 'Annual Income Tax',
+  ANNUAL_NET_INCOME = 'Annual Net Income',
 }

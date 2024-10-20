@@ -47,19 +47,19 @@ export class TaxCalculator {
     return this._annualTaxableIncomeExplanation;
   }
 
-  public get incomeTax() {
+  public get annualIncomeTax() {
     return this._annualIncomeTax;
   }
 
-  public get incomeTaxExplanation() {
+  public get annualIncomeTaxExplanation() {
     return this._annualIncomeTaxExplanation;
   }
 
-  public get netIncome() {
+  public get annualNetIncome() {
     return this._annualNetIncome;
   }
 
-  public get netIncomeExplanation() {
+  public get annualNetIncomeExplanation() {
     return this._annualNetIncomeExplanation;
   }
 
