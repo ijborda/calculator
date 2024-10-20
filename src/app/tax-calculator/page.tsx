@@ -18,6 +18,7 @@ import theme from '@/theme';
 import { formatPhpCurrency } from '@/utils/currency';
 import React from 'react';
 import { IResult } from '../interface/tax-calculator/results';
+import { RESULT_ATTRIBUTES } from '@/constants/tax-calculator/attributes';
 
 /**
  * Head Page
@@ -26,19 +27,20 @@ export default function Page() {
   /**
    * Declarations
    */
+  const { INCOME_TAX, TAXABLE_INCOME, NET_PAY } = RESULT_ATTRIBUTES;
   const initialResults: IResult[] = [
     {
-      name: 'Taxable Income',
+      name: TAXABLE_INCOME,
       value: '',
       explanation: '-',
     },
     {
-      name: 'Income Tax',
+      name: INCOME_TAX,
       value: '',
       explanation: '-',
     },
     {
-      name: 'Net Pay',
+      name: NET_PAY,
       value: '',
       explanation: '-',
     },
@@ -96,13 +98,13 @@ export default function Page() {
 
               setResults([
                 {
-                  name: 'Income Tax',
+                  name: INCOME_TAX,
                   value: formatPhpCurrency(tax),
                   explanation: explanation,
                 },
-                { name: 'Net Pay', value: formatPhpCurrency(netPay) },
+                { name: NET_PAY, value: formatPhpCurrency(netPay) },
                 {
-                  name: 'Taxable Income',
+                  name: TAXABLE_INCOME,
                   value: formatPhpCurrency(annualTaxableIncome),
                 },
               ]);

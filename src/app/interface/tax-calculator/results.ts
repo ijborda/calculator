@@ -1,8 +1,10 @@
+import { RESULT_ATTRIBUTES } from '@/constants/tax-calculator/attributes';
+
 /*
  * Basic form of tax result
  */
 export interface IResult {
-  name: string;
+  name: RESULT_ATTRIBUTES;
   value: string;
   explanation: string;
 }
