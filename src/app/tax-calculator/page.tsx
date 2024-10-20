@@ -11,11 +11,13 @@ import {
   Table,
   Link,
 } from '@/components';
-import { computeTax } from '@/helpers/tax-calculator';
+import { computeTax } from '@/helpers/tax-calculator/calculator';
+import { reducer } from '@/helpers/tax-calculator/reducer';
 import { initialLoad, sleep } from '@/helpers/utility';
 import theme from '@/theme';
 import { formatPhpCurrency } from '@/utils/currency';
 import React from 'react';
+import { IResult } from '../interface/tax-calculator/results';
 
 /**
  * Head Page
@@ -24,16 +26,7 @@ export default function Page() {
   /**
    * Declarations
    */
-
-  /**
-   * States
-   */
-  const [isReady, setIsReady] = React.useState(false);
-  const [isCalculating, setIsCalculating] = React.useState(false);
-  const [isResultShow, setIsResultShow] = React.useState(false);
-  const [annualTaxableIncome, setAnnualTaxableIncome] = React.useState(0);
-
-  const initialResults = [
+  const initialResults: IResult[] = [
     {
       name: 'Taxable Income',
       value: '',
@@ -50,25 +43,16 @@ export default function Page() {
       explanation: '-',
     },
   ];
-  const reducer = (
-    results: typeof initialResults,
-    changes: ({ name: string } & Partial<(typeof initialResults)[0]>)[]
-  ): typeof initialResults => {
-    changes.forEach((change) => {
-      const targetIndex = results.findIndex(
-        (result) => result.name === change.name
-      );
-      if (targetIndex !== -1) {
-        results[targetIndex] = { ...results[targetIndex], ...change };
-      }
-    });
-    return results;
-  };
-  const [results, setResults] = React.useReducer(reducer, initialResults);
 
   /**
-   * Functions
+   * States
    */
+  const [isReady, setIsReady] = React.useState(false);
+  const [isResultShow, setIsResultShow] = React.useState(false);
+  const [isCalculating, setIsCalculating] = React.useState(false);
+
+  const [annualTaxableIncome, setAnnualTaxableIncome] = React.useState(0);
+  const [results, setResults] = React.useReducer(reducer, initialResults);
 
   /**
    * Side effects

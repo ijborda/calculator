@@ -1,4 +1,4 @@
-import { TAX_RATES } from '@/constants/tax-rate';
+import { TAX_RATES } from '@/constants/tax-calculator/tax-rate';
 import { formatPhpCurrency } from '@/utils/currency';
 
 export const computeTax = (annualTaxableIncome: number) => {
