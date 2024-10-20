@@ -11,6 +11,8 @@ import {
   Table,
 } from '@/components';
 import { computeTax } from '@/helpers/tax-calculator';
+import { sleep } from '@/helpers/utility';
+import theme from '@/theme';
 import { formatPhpCurrency } from '@/utils/currency';
 import { logger } from '@/utils/logger';
 import React from 'react';
@@ -80,8 +82,9 @@ export default function Page() {
           </StackHorizontal>
           <LoadingButton
             loading={isCalculating}
-            onClick={() => {
+            onClick={async () => {
               setIsCalculating(true);
+              await sleep(500);
               const { tax, netPay, explanation } =
                 computeTax(annualTaxableIncome);
               setTaxableIncome(formatPhpCurrency(annualTaxableIncome));
@@ -94,40 +97,43 @@ export default function Page() {
           >
             Calculate
           </LoadingButton>
-          {isResultShow && (
-            <Table
-              autoHeght={true}
-              hideFooter={true}
-              rowCount={12}
-              columns={[
-                {
-                  field: 'entity',
-                  headerName: 'Results',
-                  flex: 1,
-                },
-                { field: 'value', headerName: 'Value', flex: 1 },
-                { field: 'explanation', headerName: 'Explanation', flex: 1 },
-              ]}
-              rows={[
-                {
-                  id: 0,
-                  entity: 'Total Taxable Income',
-                  value: taxableIncome,
-                },
-                {
-                  id: 1,
-                  entity: 'Income Tax',
-                  value: incomeTax,
-                  explanation: incomeTaxExplanation,
-                },
-                {
-                  id: 2,
-                  entity: 'Net Pay',
-                  value: netPay,
-                },
-              ]}
-            />
-          )}
+          {isResultShow &&
+            (isCalculating ? (
+              <Skeleton color={theme.palette.background.default} rowCount={1} />
+            ) : (
+              <Table
+                autoHeght={true}
+                hideFooter={true}
+                rowCount={12}
+                columns={[
+                  {
+                    field: 'entity',
+                    headerName: 'Results',
+                    flex: 1,
+                  },
+                  { field: 'value', headerName: 'Value', flex: 1 },
+                  { field: 'explanation', headerName: 'Explanation', flex: 1 },
+                ]}
+                rows={[
+                  {
+                    id: 0,
+                    entity: 'Total Taxable Income',
+                    value: taxableIncome,
+                  },
+                  {
+                    id: 1,
+                    entity: 'Income Tax',
+                    value: incomeTax,
+                    explanation: incomeTaxExplanation,
+                  },
+                  {
+                    id: 2,
+                    entity: 'Net Pay',
+                    value: netPay,
+                  },
+                ]}
+              />
+            ))}
         </StackVertical>
       </Paper>
     </StackVertical>
