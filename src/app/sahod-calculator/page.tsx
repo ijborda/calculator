@@ -22,6 +22,7 @@ import { getHelpLink } from '@/helpers/sahod-calculator/help-links';
 import { TaxCalculator } from '@/helpers/sahod-calculator/tax-calculator';
 import { RESULT_ATTRIBUTES } from '@/constants/sahod-calculator/results';
 import { reducer } from '@/helpers/sahod-calculator/result-reducer';
+import { PAYROLL_PERIOD } from '@/constants/sahod-calculator/payroll-period';
 
 /**
  * Head Page
@@ -154,15 +155,15 @@ export default function Page() {
           defaultValue='annual'
           options={[
             {
-              value: 'semi-monthly',
+              value: PAYROLL_PERIOD.SEMI_MONTLY,
               label: 'Semi Monthly',
             },
             {
-              value: 'monthly',
+              value: PAYROLL_PERIOD.MONTHLY,
               label: 'Monthly',
             },
             {
-              value: 'annual',
+              value: PAYROLL_PERIOD.ANNUAL,
               label: 'Annual',
             },
           ]}
