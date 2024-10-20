@@ -109,10 +109,14 @@ export default function Page() {
                   {
                     field: 'entity',
                     headerName: 'Results',
-                    flex: 1,
+                    flex: 0.25,
                   },
-                  { field: 'value', headerName: 'Value', flex: 1 },
-                  { field: 'explanation', headerName: 'Explanation', flex: 1 },
+                  { field: 'value', headerName: 'Value', flex: 0.25 },
+                  {
+                    field: 'explanation',
+                    headerName: 'Explanation',
+                    flex: 0.5,
+                  },
                 ]}
                 rows={[
                   {
