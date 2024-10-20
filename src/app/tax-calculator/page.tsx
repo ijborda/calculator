@@ -1,6 +1,14 @@
 'use client';
 
-import { Skeleton, StackVertical } from '@/components';
+import {
+  Button,
+  Paper,
+  SecondaryTitle,
+  Skeleton,
+  StackHorizontal,
+  StackVertical,
+  TextField,
+} from '@/components';
 import { logger } from '@/utils/logger';
 import React from 'react';
 
@@ -40,7 +48,15 @@ export default function Page() {
    */
   const mainComp = (
     <StackVertical horizontalSpacing='stretch' spacing={3}>
-      Hi
+      <Paper>
+        <StackVertical horizontalSpacing='center' spacing={5}>
+          <SecondaryTitle title='Tax Calculator' />
+          <StackHorizontal>
+            <TextField label='Annual Taxable Income' prefix='₱'></TextField>
+          </StackHorizontal>
+          <Button>Calculate</Button>
+        </StackVertical>
+      </Paper>
     </StackVertical>
   );
 
