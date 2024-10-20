@@ -29,7 +29,7 @@ export default function Page() {
   /**
    * Data
    */
-  const { INCOME_TAX, TAXABLE_INCOME, NET_PAY } = RESULT_ATTRIBUTES;
+  const { INCOME_TAX, TAXABLE_INCOME, NET_INCOME } = RESULT_ATTRIBUTES;
   const initialResults: IResult[] = [
     {
       name: TAXABLE_INCOME,
@@ -42,7 +42,7 @@ export default function Page() {
       explanation: '-',
     },
     {
-      name: NET_PAY,
+      name: NET_INCOME,
       value: '',
       explanation: '-',
     },
@@ -64,7 +64,7 @@ export default function Page() {
   const getExplanationComponent = (explanation?: string) => {
     return explanation
       ?.split('<br/>')
-      .map((paragraph) => <div>{paragraph}</div>);
+      .map((paragraph, i) => <div key={i}>{paragraph}</div>);
   };
 
   const getHelpComponent = (attribute: RESULT_ATTRIBUTES) => {
@@ -103,9 +103,9 @@ export default function Page() {
         explanation: taxCalculator.incomeTaxExplanation,
       },
       {
-        name: NET_PAY,
-        value: formatPhpCurrency(taxCalculator.netPay),
-        explanation: taxCalculator.netPayExplanation,
+        name: NET_INCOME,
+        value: formatPhpCurrency(taxCalculator.netIncome),
+        explanation: taxCalculator.netIncomeExplanation,
       },
     ]);
     // Wrapup computation
@@ -176,6 +176,7 @@ export default function Page() {
             rowCount={12}
             columns={columns}
             rows={results.map((result) => ({
+              key: result.name,
               id: result.name,
               name: result.name,
               value: result.value,

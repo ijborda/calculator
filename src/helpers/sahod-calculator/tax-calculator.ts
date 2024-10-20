@@ -18,19 +18,19 @@ export class TaxCalculator {
   private _taxableIncomeExplanation: string;
   private _incomeTax: number;
   private _incomeTaxExplanation: string;
-  private _netPay: number;
-  private _netPayExplanation: string;
+  private _netIncome: number;
+  private _netIncomeExplanation: string;
 
   constructor(taxableIncome: number) {
+    this.taxableIncome = taxableIncome;
     this.taxBracket = this.getTaxBracket();
     this.excessOver = this.taxBracket.bounds.inclusiveLower - 1;
     this.excess = taxableIncome - this.excessOver;
-    this.taxableIncome = taxableIncome;
     this._taxableIncomeExplanation = this.getTaxableIncomeExplanation();
     this._incomeTax = this.getIncomeTax();
     this._incomeTaxExplanation = this.getIncomeTaxExplanation();
-    this._netPay = this.getNetPay();
-    this._netPayExplanation = this.getNetPayExaplanation();
+    this._netIncome = this.getNetIncome();
+    this._netIncomeExplanation = this.getNetIncomeExaplanation();
   }
 
   public get taxableIncomeExplanation() {
@@ -45,12 +45,12 @@ export class TaxCalculator {
     return this._incomeTaxExplanation;
   }
 
-  public get netPay() {
-    return this._netPay;
+  public get netIncome() {
+    return this._netIncome;
   }
 
-  public get netPayExplanation() {
-    return this._netPayExplanation;
+  public get netIncomeExplanation() {
+    return this._netIncomeExplanation;
   }
 
   private getTaxBracket = () => {
@@ -73,7 +73,7 @@ export class TaxCalculator {
     const fmtExcess = formatPhpCurrency(this.excess);
     const fmtIncomeTax = formatPhpCurrency(this._incomeTax);
     const fmtVariableTax = formatPhpCurrency(this.excess * excessTaxRate);
-    const fmtNetPay = formatPhpCurrency(this._netPay);
+    const fmtNetIncome = formatPhpCurrency(this._netIncome);
     return {
       fmtTaxableIncome,
       fmtExcessOver,
@@ -83,7 +83,7 @@ export class TaxCalculator {
       fmtExcess,
       fmtIncomeTax,
       fmtVariableTax,
-      fmtNetPay,
+      fmtNetIncome,
     };
   };
 
@@ -92,7 +92,7 @@ export class TaxCalculator {
     return `
       Your taxable income is ${fmtTaxableIncome} which is what you entered.
       This is your gross pay after deducting all government mandated benefits
-      such as SSS, Pag-Ibig, and Philhealt.
+      such as SSS, Pag-IBIG, and PhilHealth. These government mandated benefits are non-taxable.
     `;
   }
 
@@ -164,15 +164,16 @@ export class TaxCalculator {
     }
   }
 
-  private getNetPay() {
+  private getNetIncome() {
     return this.taxableIncome - this._incomeTax;
   }
 
-  private getNetPayExaplanation() {
-    const { fmtTaxableIncome, fmtNetPay, fmtIncomeTax } = this.getfmtValues();
+  private getNetIncomeExaplanation() {
+    const { fmtTaxableIncome, fmtNetIncome, fmtIncomeTax } =
+      this.getfmtValues();
     return `
       Your taxable income is ${fmtTaxableIncome} and your income tax is ${fmtIncomeTax}.
-      Then your net income is ${fmtTaxableIncome} - ${fmtIncomeTax} = ${fmtNetPay}.
+      Then your net income is ${fmtTaxableIncome} - ${fmtIncomeTax} = ${fmtNetIncome}.
     `;
   }
 }
