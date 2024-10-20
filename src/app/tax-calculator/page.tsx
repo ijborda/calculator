@@ -11,7 +11,6 @@ import {
   Table,
   Link,
 } from '@/components';
-import { computeTax } from '@/helpers/tax-calculator/calculator';
 import { reducer } from '@/helpers/tax-calculator/reducer';
 import { initialLoad, sleep } from '@/helpers/utility';
 import theme from '@/theme';
@@ -19,8 +18,9 @@ import { formatPhpCurrency } from '@/utils/currency';
 import React from 'react';
 import { IResult } from '../interface/tax-calculator/results';
 import { RESULT_ATTRIBUTES } from '@/constants/tax-calculator/attributes';
-import { GridRenderCellParams, GridTreeNodeWithRender } from '@mui/x-data-grid';
+import { GridRenderCellParams } from '@mui/x-data-grid';
 import { getHelpLink } from '@/helpers/tax-calculator/help-links';
+import { TaxCalculator } from '@/helpers/tax-calculator/tax-calculator';
 
 /**
  * Head Page
@@ -90,17 +90,21 @@ export default function Page() {
     setIsCalculating(true);
     await sleep(500);
     // Compute and set results
-    const { tax, netPay, explanation } = computeTax(annualTaxableIncome);
+    const taxCalculator = new TaxCalculator(annualTaxableIncome);
     setResults([
       {
-        name: INCOME_TAX,
-        value: formatPhpCurrency(tax),
-        explanation: explanation,
-      },
-      { name: NET_PAY, value: formatPhpCurrency(netPay) },
-      {
         name: TAXABLE_INCOME,
-        value: formatPhpCurrency(annualTaxableIncome),
+        value: formatPhpCurrency(taxCalculator.taxableIncome),
+      },
+      {
+        name: INCOME_TAX,
+        value: formatPhpCurrency(taxCalculator.incomeTax),
+        explanation: taxCalculator.incomeTaxExplanation,
+      },
+      {
+        name: NET_PAY,
+        value: formatPhpCurrency(taxCalculator.netPay),
+        explanation: taxCalculator.netPayExplanation,
       },
     ]);
     // Wrapup computation
