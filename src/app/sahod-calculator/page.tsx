@@ -11,16 +11,16 @@ import {
   Table,
   Link,
 } from '@/components';
-import { reducer } from '@/helpers/sahod-calculator/reducer';
 import { initialLoad, sleep } from '@/helpers/utility';
 import theme from '@/theme';
 import { formatPhpCurrency } from '@/utils/currency';
 import React from 'react';
 import { IResult } from '../../interfaces/sahod-calculator/results';
-import { RESULT_ATTRIBUTES } from '@/constants/sahod-calculator/attributes';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { getHelpLink } from '@/helpers/sahod-calculator/help-links';
 import { TaxCalculator } from '@/helpers/sahod-calculator/tax-calculator';
+import { RESULT_ATTRIBUTES } from '@/constants/sahod-calculator/results';
+import { reducer } from '@/helpers/sahod-calculator/result-reducer';
 
 /**
  * Head Page
