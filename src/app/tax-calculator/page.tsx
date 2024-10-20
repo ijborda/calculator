@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  Button,
+  LoadingButton,
   Paper,
   SecondaryTitle,
   Skeleton,
@@ -13,7 +13,7 @@ import {
 import { computeTax } from '@/helpers/tax-calculator';
 import { formatPhpCurrency } from '@/utils/currency';
 import { logger } from '@/utils/logger';
-import React, { EventHandler } from 'react';
+import React from 'react';
 
 /**
  * Head Page
@@ -27,6 +27,7 @@ export default function Page() {
    * States
    */
   const [isReady, setIsReady] = React.useState(false);
+  const [isCalculating, setIsCalculating] = React.useState(false);
   const [annualTaxableIncome, setAnnualTaxableIncome] = React.useState(0);
   const [taxableIncome, setTaxableIncome] = React.useState('');
   const [incomeTax, setIncomeTax] = React.useState('');
@@ -75,16 +76,19 @@ export default function Page() {
               }}
             ></TextField>
           </StackHorizontal>
-          <Button
+          <LoadingButton
+            loading={isCalculating}
             onClick={() => {
+              setIsCalculating(true);
               const { tax, netPay } = computeTax(annualTaxableIncome);
               setTaxableIncome(formatPhpCurrency(annualTaxableIncome));
               setIncomeTax(formatPhpCurrency(tax));
               setNetPay(formatPhpCurrency(netPay));
+              setIsCalculating(false);
             }}
           >
             Calculate
-          </Button>
+          </LoadingButton>
           <Table
             hideFooter={true}
             rowCount={12}
