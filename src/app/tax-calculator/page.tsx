@@ -9,6 +9,7 @@ import {
   StackVertical,
   TextField,
   Table,
+  Link,
 } from '@/components';
 import { computeTax } from '@/helpers/tax-calculator';
 import { sleep } from '@/helpers/utility';
@@ -116,6 +117,21 @@ export default function Page() {
                     field: 'explanation',
                     headerName: 'Explanation',
                     flex: 0.5,
+                    renderCell: (params) => (
+                      <StackVertical spacing={1}>
+                        {(params.row.explanation as string)
+                          ?.split('<br/>')
+                          .map((a) => (
+                            <div>{a}</div>
+                          ))}
+                        {params.row.explanation && (
+                          <Link href='https://www.bir.gov.ph/income-tax'>
+                            More info: BIR Tax Rate (scroll down to INCOME TAX
+                            RATES)
+                          </Link>
+                        )}
+                      </StackVertical>
+                    ),
                   },
                 ]}
                 rows={[

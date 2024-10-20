@@ -32,34 +32,34 @@ export const computeTax = (annualTaxableIncome: number) => {
     case '1st':
       explanation = `
         Your annual taxable income is ${formattedTaxableIncome}.
-        Per the income tax rate published by the BIR (https://www.bir.gov.ph/income-tax),
+        Per the income tax rate published by the BIR,
         you fall on the ${id} tax bracket
-        which covers annual income below ${formattedUpperBound}.
-        \n\n
+        which covers annual income of ${formattedUpperBound} or below.
+        <br/>
         For this bracket, you are tax exempt so your income tax is ${formattedTax}.`;
       break;
     case '2nd':
       explanation = `
         Your annual taxable income is ${formattedTaxableIncome}.
-        Per the income tax rate published by the BIR (https://www.bir.gov.ph/income-tax),
+        Per the income tax rate published by the BIR,
         you fall on the ${id} tax bracket
         which covers annual income over ${formattedPreviousBracketUpperBound}
         but not over ${formattedUpperBound}.
-        \n\n
+        <br/>
         For this bracket, the tax is calculated as: ${formattedExcessTaxRate} of the excess over ${formattedPreviousBracketUpperBound}.
-        \n\n\n
+        <br/>
         Your excess is ${formattedTaxableIncome} - ${formattedPreviousBracketUpperBound} = ${formattedExcess}.
         So, your total tax is ${formattedExcess} * ${excessTaxRate} = ${formattedTax}.`;
       break;
     case '6th':
       explanation = `
         Your annual taxable income is ${formattedTaxableIncome}.
-        Per the income tax rate published by the BIR (https://www.bir.gov.ph/income-tax),
+        Per the income tax rate published by the BIR,
         you fall on the ${id} tax bracket
         which covers annual income over ${formattedPreviousBracketUpperBound}.
-        \n\n
+        <br/>
         For this bracket, the tax is calculated as: ${formattedFixedTax} + ${formattedExcessTaxRate} of the excess over ${formattedPreviousBracketUpperBound}.
-        \n\n\n
+        <br/>
         Your excess is ${formattedTaxableIncome} - ${formattedPreviousBracketUpperBound} = ${formattedExcess}.
         So, your total tax is ${formattedFixedTax} + (${formattedExcess} * ${excessTaxRate})
         which is equal to ${formattedFixedTax} + ${formattedVariableTax} = ${formattedTax}.`;
@@ -67,13 +67,13 @@ export const computeTax = (annualTaxableIncome: number) => {
     default:
       explanation = `
         Your annual taxable income is ${formattedTaxableIncome}.
-        Per the income tax rate published by the BIR (https://www.bir.gov.ph/income-tax),
+        Per the income tax rate published by the BIR,
         you fall on the ${id} tax bracket
         which covers annual income over ${formattedPreviousBracketUpperBound}
         but not over ${formattedUpperBound}.
-        \n\n
+        <br/>
         For this bracket, the tax is calculated as: ${formattedFixedTax} + ${formattedExcessTaxRate} of the excess over ${formattedPreviousBracketUpperBound}.
-        \n\n\n
+        <br/>
         Your excess is ${formattedTaxableIncome} - ${formattedPreviousBracketUpperBound} = ${formattedExcess}.
         So, your total tax is ${formattedFixedTax} + (${formattedExcess} * ${excessTaxRate})
         which is equal to ${formattedFixedTax} + ${formattedVariableTax} = ${formattedTax}.`;
