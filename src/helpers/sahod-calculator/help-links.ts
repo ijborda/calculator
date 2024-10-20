@@ -8,6 +8,12 @@ export const getHelpLink = (attribute: RESULT_ATTRIBUTES) => {
         displayText:
           'More info: BIR Tax Rate (scroll down to INCOME TAX RATES)',
       };
+    case RESULT_ATTRIBUTES.TAXABLE_INCOME:
+      return {
+        link: 'https://www.bir.gov.ph/income-tax',
+        displayText:
+          'More info: See FAQS - What are some of the exclusions from gross income?',
+      };
     default:
       undefined;
   }

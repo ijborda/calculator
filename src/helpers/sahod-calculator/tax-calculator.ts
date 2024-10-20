@@ -91,8 +91,8 @@ export class TaxCalculator {
     const { fmtTaxableIncome } = this.getfmtValues();
     return `
       Your taxable income is ${fmtTaxableIncome} which is what you entered.
-      This is your gross pay after deducting all government mandated benefits
-      such as SSS, Pag-IBIG, and PhilHealth. These government mandated benefits are non-taxable.
+      This is your total salary subtracted by all deductions (such as government mandated benefits
+      like SSS, Pag-IBIG, and PhilHealth). These government mandated benefits are non-taxable.
     `;
   }
 
