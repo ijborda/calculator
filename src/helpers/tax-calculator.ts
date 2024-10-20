@@ -1,6 +1,6 @@
 import { TAX_RATES } from '@/constants/tax-rate';
 
-export const getTotalTax = (annualTaxableIncome: number) => {
+export const computeTax = (annualTaxableIncome: number) => {
   const taxRate = TAX_RATES.find(
     ({ inclusiveBounds }) =>
       annualTaxableIncome >= inclusiveBounds[0] &&
@@ -11,6 +11,10 @@ export const getTotalTax = (annualTaxableIncome: number) => {
   const { fixedTax, inclusiveBounds, excessTaxRate } = taxRate;
   const excess = annualTaxableIncome - (inclusiveBounds[0] - 1);
   const tax = fixedTax + excess * excessTaxRate;
+  const netPay = annualTaxableIncome - tax;
 
-  return tax;
+  return {
+    tax,
+    netPay,
+  };
 };

@@ -8,7 +8,10 @@ import {
   StackHorizontal,
   StackVertical,
   TextField,
+  Table,
 } from '@/components';
+import { computeTax } from '@/helpers/tax-calculator';
+import { formatPhpCurrency } from '@/utils/currency';
 import { logger } from '@/utils/logger';
 import React, { EventHandler } from 'react';
 
@@ -25,6 +28,9 @@ export default function Page() {
    */
   const [isReady, setIsReady] = React.useState(false);
   const [annualTaxableIncome, setAnnualTaxableIncome] = React.useState(0);
+  const [taxableIncome, setTaxableIncome] = React.useState('');
+  const [incomeTax, setIncomeTax] = React.useState('');
+  const [netPay, setNetPay] = React.useState('');
 
   /**
    * Functions
@@ -69,7 +75,41 @@ export default function Page() {
               }}
             ></TextField>
           </StackHorizontal>
-          <Button>Calculate</Button>
+          <Button
+            onClick={() => {
+              const { tax, netPay } = computeTax(annualTaxableIncome);
+              setTaxableIncome(formatPhpCurrency(annualTaxableIncome));
+              setIncomeTax(formatPhpCurrency(tax));
+              setNetPay(formatPhpCurrency(netPay));
+            }}
+          >
+            Calculate
+          </Button>
+          <Table
+            hideFooter={true}
+            rowCount={12}
+            columns={[
+              { field: 'entity', headerName: 'Results', flex: 1 },
+              { field: 'value', headerName: '', flex: 1 },
+            ]}
+            rows={[
+              {
+                id: 0,
+                entity: 'Total Taxable Income',
+                value: taxableIncome,
+              },
+              {
+                id: 1,
+                entity: 'Income Tax',
+                value: incomeTax,
+              },
+              {
+                id: 2,
+                entity: 'Net Pay',
+                value: netPay,
+              },
+            ]}
+          />
         </StackVertical>
       </Paper>
     </StackVertical>
