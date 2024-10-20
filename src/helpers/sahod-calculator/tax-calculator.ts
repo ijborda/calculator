@@ -23,10 +23,10 @@ export class TaxCalculator {
 
   // Outputs
   private _annualTaxableIncomeExplanation: string;
-  private _incomeTax: number;
-  private _incomeTaxExplanation: string;
-  private _netIncome: number;
-  private _netIncomeExplanation: string;
+  private _annualIncomeTax: number;
+  private _annualIncomeTaxExplanation: string;
+  private _annualNetIncome: number;
+  private _annualNetIncomeExplanation: string;
 
   constructor(taxableIncome: number, payrollPeriod = PAYROLL_PERIOD.ANNUAL) {
     this.taxableIncome = taxableIncome;
@@ -37,10 +37,10 @@ export class TaxCalculator {
     this.excess = this.annualTaxableIncome - this.excessOver;
     this._annualTaxableIncomeExplanation =
       this.getannualTaxableIncomeExplanation();
-    this._incomeTax = this.getIncomeTax();
-    this._incomeTaxExplanation = this.getIncomeTaxExplanation();
-    this._netIncome = this.getNetIncome();
-    this._netIncomeExplanation = this.getNetIncomeExaplanation();
+    this._annualIncomeTax = this.getAnnualIncomeTax();
+    this._annualIncomeTaxExplanation = this.getAnnualIncomeTaxExplanation();
+    this._annualNetIncome = this.getAnnualNetIncome();
+    this._annualNetIncomeExplanation = this.getAnnualNetIncomeExaplanation();
   }
 
   public get annualTaxableIncomeExplanation() {
@@ -48,19 +48,19 @@ export class TaxCalculator {
   }
 
   public get incomeTax() {
-    return this._incomeTax;
+    return this._annualIncomeTax;
   }
 
   public get incomeTaxExplanation() {
-    return this._incomeTaxExplanation;
+    return this._annualIncomeTaxExplanation;
   }
 
   public get netIncome() {
-    return this._netIncome;
+    return this._annualNetIncome;
   }
 
   public get netIncomeExplanation() {
-    return this._netIncomeExplanation;
+    return this._annualNetIncomeExplanation;
   }
 
   private getTaxBracket = () => {
@@ -82,9 +82,9 @@ export class TaxCalculator {
     const fmtFixedTax = formatPhpCurrency(fixedTax);
     const fmtExcessTaxRate = `${excessTaxRate * 100}%`;
     const fmtExcess = formatPhpCurrency(this.excess);
-    const fmtIncomeTax = formatPhpCurrency(this._incomeTax);
+    const fmtIncomeTax = formatPhpCurrency(this._annualIncomeTax);
     const fmtVariableTax = formatPhpCurrency(this.excess * excessTaxRate);
-    const fmtNetIncome = formatPhpCurrency(this._netIncome);
+    const fmtNetIncome = formatPhpCurrency(this._annualNetIncome);
     return {
       fmtTaxableIncome,
       fmtannualTaxableIncome,
@@ -112,13 +112,13 @@ export class TaxCalculator {
     `;
   }
 
-  private getIncomeTax() {
+  private getAnnualIncomeTax() {
     const { fixedTax, excessTaxRate } = this.taxBracket;
     const tax = fixedTax + this.excess * excessTaxRate;
     return tax;
   }
 
-  private getIncomeTaxExplanation() {
+  private getAnnualIncomeTaxExplanation() {
     const { id } = this.taxBracket;
     const {
       fmtannualTaxableIncome,
@@ -180,11 +180,11 @@ export class TaxCalculator {
     }
   }
 
-  private getNetIncome() {
-    return this.annualTaxableIncome - this._incomeTax;
+  private getAnnualNetIncome() {
+    return this.annualTaxableIncome - this._annualIncomeTax;
   }
 
-  private getNetIncomeExaplanation() {
+  private getAnnualNetIncomeExaplanation() {
     const { fmtannualTaxableIncome, fmtNetIncome, fmtIncomeTax } =
       this.getfmtValues();
     return `
