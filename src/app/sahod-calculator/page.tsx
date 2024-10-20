@@ -10,6 +10,7 @@ import {
   TextField,
   Table,
   Link,
+  TextFieldSelect,
 } from '@/components';
 import { initialLoad, sleep } from '@/helpers/utility';
 import theme from '@/theme';
@@ -147,7 +148,24 @@ export default function Page() {
    */
   const input = (
     <>
-      <StackHorizontal>
+      <StackHorizontal spacing={3}>
+        <TextFieldSelect
+          label='Payroll Period'
+          options={[
+            {
+              value: 'semi-monthly',
+              label: 'Semi Monthly',
+            },
+            {
+              value: 'monthly',
+              label: 'Monthly',
+            },
+            {
+              value: 'annual',
+              label: 'Annual',
+            },
+          ]}
+        ></TextFieldSelect>
         <TextField
           label='Annual Taxable Income'
           prefix='₱'
