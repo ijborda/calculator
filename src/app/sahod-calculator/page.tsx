@@ -168,7 +168,7 @@ export default function Page() {
           ]}
         ></TextFieldSelect>
         <TextField
-          label='Annual Taxable Income'
+          label='Taxable Income'
           prefix='₱'
           value={annualTaxableIncome}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
