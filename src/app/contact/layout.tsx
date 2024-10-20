@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Tax Calculator',
+  title: 'Contact',
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

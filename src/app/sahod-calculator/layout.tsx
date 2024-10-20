@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Support',
+  title: 'Sahod Calculator',
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;
