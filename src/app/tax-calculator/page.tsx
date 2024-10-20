@@ -12,10 +12,9 @@ import {
   Link,
 } from '@/components';
 import { computeTax } from '@/helpers/tax-calculator';
-import { sleep } from '@/helpers/utility';
+import { initialLoad, sleep } from '@/helpers/utility';
 import theme from '@/theme';
 import { formatPhpCurrency } from '@/utils/currency';
-import { logger } from '@/utils/logger';
 import React from 'react';
 
 /**
@@ -75,15 +74,8 @@ export default function Page() {
    * Side effects
    */
   React.useEffect(() => {
-    // Fetch announcements
-    const fn = async () => {
-      await logger.call(async () => {
-        if (ignore) return;
-        setIsReady(true);
-      });
-    };
     let ignore = false;
-    fn();
+    initialLoad(setIsReady);
     return () => {
       ignore = true;
     };
