@@ -28,6 +28,7 @@ export default function Page() {
    */
   const [isReady, setIsReady] = React.useState(false);
   const [isCalculating, setIsCalculating] = React.useState(false);
+  const [isResultShow, setIsResultShow] = React.useState(false);
   const [annualTaxableIncome, setAnnualTaxableIncome] = React.useState(0);
   const [taxableIncome, setTaxableIncome] = React.useState('');
   const [incomeTax, setIncomeTax] = React.useState('');
@@ -84,36 +85,43 @@ export default function Page() {
               setTaxableIncome(formatPhpCurrency(annualTaxableIncome));
               setIncomeTax(formatPhpCurrency(tax));
               setNetPay(formatPhpCurrency(netPay));
+              setIsResultShow(true);
               setIsCalculating(false);
             }}
           >
             Calculate
           </LoadingButton>
-          <Table
-            hideFooter={true}
-            rowCount={12}
-            columns={[
-              { field: 'entity', headerName: 'Results', flex: 1 },
-              { field: 'value', headerName: '', flex: 1 },
-            ]}
-            rows={[
-              {
-                id: 0,
-                entity: 'Total Taxable Income',
-                value: taxableIncome,
-              },
-              {
-                id: 1,
-                entity: 'Income Tax',
-                value: incomeTax,
-              },
-              {
-                id: 2,
-                entity: 'Net Pay',
-                value: netPay,
-              },
-            ]}
-          />
+          {isResultShow && (
+            <Table
+              hideFooter={true}
+              rowCount={12}
+              columns={[
+                {
+                  field: 'entity',
+                  headerName: 'Results',
+                  flex: 1,
+                },
+                { field: 'value', headerName: '', flex: 1 },
+              ]}
+              rows={[
+                {
+                  id: 0,
+                  entity: 'Total Taxable Income',
+                  value: taxableIncome,
+                },
+                {
+                  id: 1,
+                  entity: 'Income Tax',
+                  value: incomeTax,
+                },
+                {
+                  id: 2,
+                  entity: 'Net Pay',
+                  value: netPay,
+                },
+              ]}
+            />
+          )}
         </StackVertical>
       </Paper>
     </StackVertical>
