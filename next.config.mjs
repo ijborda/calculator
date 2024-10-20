@@ -10,6 +10,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cdn.buymeacoffee.com',
         pathname: '/buttons/v2/**',
+        port: '',
       },
     ],
   },
