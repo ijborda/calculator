@@ -33,10 +33,39 @@ export default function Page() {
   const [isCalculating, setIsCalculating] = React.useState(false);
   const [isResultShow, setIsResultShow] = React.useState(false);
   const [annualTaxableIncome, setAnnualTaxableIncome] = React.useState(0);
-  const [taxableIncome, setTaxableIncome] = React.useState('');
-  const [incomeTaxExplanation, setIncomeTaxExplanation] = React.useState('');
-  const [incomeTax, setIncomeTax] = React.useState('');
-  const [netPay, setNetPay] = React.useState('');
+
+  const initialResults = [
+    {
+      name: 'Taxable Income',
+      value: '',
+      explanation: '-',
+    },
+    {
+      name: 'Income Tax',
+      value: '',
+      explanation: '-',
+    },
+    {
+      name: 'Net Pay',
+      value: '',
+      explanation: '-',
+    },
+  ];
+  const reducer = (
+    results: typeof initialResults,
+    changes: ({ name: string } & Partial<(typeof initialResults)[0]>)[]
+  ): typeof initialResults => {
+    changes.forEach((change) => {
+      const targetIndex = results.findIndex(
+        (result) => result.name === change.name
+      );
+      if (targetIndex !== -1) {
+        results[targetIndex] = { ...results[targetIndex], ...change };
+      }
+    });
+    return results;
+  };
+  const [results, setResults] = React.useReducer(reducer, initialResults);
 
   /**
    * Functions
@@ -88,10 +117,20 @@ export default function Page() {
               await sleep(500);
               const { tax, netPay, explanation } =
                 computeTax(annualTaxableIncome);
-              setTaxableIncome(formatPhpCurrency(annualTaxableIncome));
-              setIncomeTax(formatPhpCurrency(tax));
-              setNetPay(formatPhpCurrency(netPay));
-              setIncomeTaxExplanation(explanation);
+
+              setResults([
+                {
+                  name: 'Income Tax',
+                  value: formatPhpCurrency(tax),
+                  explanation: explanation,
+                },
+                { name: 'Net Pay', value: formatPhpCurrency(netPay) },
+                {
+                  name: 'Taxable Income',
+                  value: formatPhpCurrency(annualTaxableIncome),
+                },
+              ]);
+
               setIsResultShow(true);
               setIsCalculating(false);
             }}
@@ -124,7 +163,7 @@ export default function Page() {
                           .map((a) => (
                             <div>{a}</div>
                           ))}
-                        {params.row.explanation && (
+                        {params.row.entity === 'Income Tax' && (
                           <Link href='https://www.bir.gov.ph/income-tax'>
                             More info: BIR Tax Rate (scroll down to INCOME TAX
                             RATES)
@@ -134,24 +173,12 @@ export default function Page() {
                     ),
                   },
                 ]}
-                rows={[
-                  {
-                    id: 0,
-                    entity: 'Total Taxable Income',
-                    value: taxableIncome,
-                  },
-                  {
-                    id: 1,
-                    entity: 'Income Tax',
-                    value: incomeTax,
-                    explanation: incomeTaxExplanation,
-                  },
-                  {
-                    id: 2,
-                    entity: 'Net Pay',
-                    value: netPay,
-                  },
-                ]}
+                rows={results.map((result) => ({
+                  id: result.name,
+                  entity: result.name,
+                  value: result.value,
+                  explanation: result.explanation,
+                }))}
               />
             ))}
         </StackVertical>
