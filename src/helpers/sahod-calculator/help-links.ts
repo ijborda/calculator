@@ -1,4 +1,4 @@
-import { RESULT_ATTRIBUTES } from '@/constants/sahod-calculator/attributes';
+import { RESULT_ATTRIBUTES } from '@/constants/sahod-calculator/results';
 
 export const getHelpLink = (attribute: RESULT_ATTRIBUTES) => {
   switch (attribute) {

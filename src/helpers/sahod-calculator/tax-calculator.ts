@@ -1,4 +1,4 @@
-import { TAX_BRACKETS } from '@/constants/sahod-calculator/tax-rate';
+import { TAX_BRACKETS } from '@/constants/sahod-calculator/tax-brackets';
 import { formatPhpCurrency } from '@/utils/currency';
 
 export class TaxCalculator {
