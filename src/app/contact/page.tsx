@@ -50,11 +50,12 @@ export default function Page() {
             <StackVertical spacing={1.5}>
               <Typography>Want to support?</Typography>
               <Link href='https://www.buymeacoffee.com/ijborda'>
-                <Image
+                {/* TODO: Make this img component of next/image*/}
+                <img
                   src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png'
                   alt='Buy Me A Coffee'
                   width={200}
-                  aspectRatio={545 / 152}
+                  // aspectRatio={545 / 152}
                 />
               </Link>
             </StackVertical>
