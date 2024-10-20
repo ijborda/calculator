@@ -151,6 +151,7 @@ export default function Page() {
       <StackHorizontal spacing={3}>
         <TextFieldSelect
           label='Payroll Period'
+          defaultValue='annual'
           options={[
             {
               value: 'semi-monthly',
