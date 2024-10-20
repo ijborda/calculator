@@ -25,7 +25,7 @@ export default function Page() {
           <H2 title='Oops! Page Not Found!' />
           <Subtitle text='It looks like your are trying to access a page that was has been deleted or never even existed.' />
           <Box>
-            <Button href='/tools'>Go back to home</Button>
+            <Button href='/tax-calculator'>Go back to home</Button>
           </Box>
         </StackVertical>
       </Box>

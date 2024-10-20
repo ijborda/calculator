@@ -5,7 +5,7 @@ export const sidebarItems = [
   {
     text: 'Tax Calculator',
     icon: <CalculateIcon />,
-    link: '/calculator/tax',
+    link: '/tax-calculator',
   },
   {
     text: 'Support',
