@@ -3,8 +3,14 @@ import { TAX_BRACKETS } from '@/constants/sahod-calculator/tax-brackets';
 import { formatPhpCurrency } from '@/utils/currency';
 
 export class TaxCalculator {
-  // Annual taxable income
+  // Annual total taxable income
   public totalTaxableIncome: number;
+
+  // Taxable income in one payroll period
+  private taxableIncome: number;
+
+  // PayrollPeriod
+  private payrollPeriod: PAYROLL_PERIOD;
 
   // Tax bracket in use
   private taxBracket: (typeof TAX_BRACKETS)[0];
@@ -23,7 +29,9 @@ export class TaxCalculator {
   private _netIncomeExplanation: string;
 
   constructor(taxableIncome: number, payrollPeriod = PAYROLL_PERIOD.ANNUAL) {
-    this.totalTaxableIncome = taxableIncome * payrollPeriod;
+    this.taxableIncome = taxableIncome;
+    this.payrollPeriod = payrollPeriod;
+    this.totalTaxableIncome = this.taxableIncome * this.payrollPeriod;
     this.taxBracket = this.getTaxBracket();
     this.excessOver = this.taxBracket.bounds.inclusiveLower - 1;
     this.excess = this.totalTaxableIncome - this.excessOver;
@@ -67,6 +75,7 @@ export class TaxCalculator {
 
   private getfmtValues = () => {
     const { bounds, fixedTax, excessTaxRate } = this.taxBracket;
+    const fmtTaxableIncome = formatPhpCurrency(this.taxableIncome);
     const fmttotalTaxableIncome = formatPhpCurrency(this.totalTaxableIncome);
     const fmtExcessOver = formatPhpCurrency(this.excessOver);
     const fmtUpperBound = formatPhpCurrency(bounds.inclusiveUpper);
@@ -77,6 +86,7 @@ export class TaxCalculator {
     const fmtVariableTax = formatPhpCurrency(this.excess * excessTaxRate);
     const fmtNetIncome = formatPhpCurrency(this._netIncome);
     return {
+      fmtTaxableIncome,
       fmttotalTaxableIncome,
       fmtExcessOver,
       fmtUpperBound,
@@ -90,10 +100,14 @@ export class TaxCalculator {
   };
 
   private gettotalTaxableIncomeExplanation() {
-    const { fmttotalTaxableIncome } = this.getfmtValues();
+    const { fmttotalTaxableIncome, fmtTaxableIncome } = this.getfmtValues();
     return `
-      Your taxable income is ${fmttotalTaxableIncome} which is what you entered.
-      This is your total salary subtracted by all deductions (such as government mandated benefits
+      Your total taxable income is ${fmttotalTaxableIncome}.
+      This is ${fmtTaxableIncome}
+      multiplied by ${this.payrollPeriod} (based on the entered payroll period).
+      So, ${fmtTaxableIncome} * ${this.payrollPeriod} = ${fmttotalTaxableIncome}.
+      <br/>
+      This is your total annual salary subtracted by all deductions (such as government mandated benefits
       like SSS, Pag-IBIG, and PhilHealth). These government mandated benefits are non-taxable.
     `;
   }
