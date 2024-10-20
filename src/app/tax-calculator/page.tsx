@@ -31,6 +31,7 @@ export default function Page() {
   const [isResultShow, setIsResultShow] = React.useState(false);
   const [annualTaxableIncome, setAnnualTaxableIncome] = React.useState(0);
   const [taxableIncome, setTaxableIncome] = React.useState('');
+  const [incomeTaxExplanation, setIncomeTaxExplanation] = React.useState('');
   const [incomeTax, setIncomeTax] = React.useState('');
   const [netPay, setNetPay] = React.useState('');
 
@@ -81,10 +82,12 @@ export default function Page() {
             loading={isCalculating}
             onClick={() => {
               setIsCalculating(true);
-              const { tax, netPay } = computeTax(annualTaxableIncome);
+              const { tax, netPay, explanation } =
+                computeTax(annualTaxableIncome);
               setTaxableIncome(formatPhpCurrency(annualTaxableIncome));
               setIncomeTax(formatPhpCurrency(tax));
               setNetPay(formatPhpCurrency(netPay));
+              setIncomeTaxExplanation(explanation);
               setIsResultShow(true);
               setIsCalculating(false);
             }}
@@ -93,6 +96,7 @@ export default function Page() {
           </LoadingButton>
           {isResultShow && (
             <Table
+              autoHeght={true}
               hideFooter={true}
               rowCount={12}
               columns={[
@@ -101,7 +105,8 @@ export default function Page() {
                   headerName: 'Results',
                   flex: 1,
                 },
-                { field: 'value', headerName: '', flex: 1 },
+                { field: 'value', headerName: 'Value', flex: 1 },
+                { field: 'explanation', headerName: 'Explanation', flex: 1 },
               ]}
               rows={[
                 {
@@ -113,6 +118,7 @@ export default function Page() {
                   id: 1,
                   entity: 'Income Tax',
                   value: incomeTax,
+                  explanation: incomeTaxExplanation,
                 },
                 {
                   id: 2,
