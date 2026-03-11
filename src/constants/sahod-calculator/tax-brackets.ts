@@ -43,7 +43,7 @@ export const TAX_BRACKETS = [
     // P490,000 + 32% of the excess over P2,000,000
     id: '5th',
     bounds: {
-      inclusiveLower: 2_000_0000 + 1,
+      inclusiveLower: 2_000_000 + 1,
       inclusiveUpper: 8_000_000,
     },
     fixedTax: 490_000,
