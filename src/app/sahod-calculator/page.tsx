@@ -801,7 +801,7 @@ export default function Page() {
             Sahod Calculator
           </Typography>
           <Typography variant='subtitle1' color='text.secondary'>
-            Modern monthly and annual payroll view with SSS, PhilHealth,
+            Monthly and annual payroll view with SSS, PhilHealth,
             Pag-IBIG, taxable income, and income tax breakdown.
           </Typography>
           <Box
