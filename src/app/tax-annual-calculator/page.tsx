@@ -30,7 +30,7 @@ export default function Page() {
     ANNUAL_SSS,
     ANNUAL_PHILHEALTH,
     ANNUAL_PAG_IBIG,
-    ANNUAL_DEDUCTIONS,
+    ANNUAL_CONTRIBUTIONS,
     ANNUAL_TAXABLE_INCOME,
     ANNUAL_GROSS_INCOME,
     ANNUAL_INCOME_TAX,
@@ -44,7 +44,7 @@ export default function Page() {
     { name: ANNUAL_SSS, value: '', explanation: '-' },
     { name: ANNUAL_PHILHEALTH, value: '', explanation: '-' },
     { name: ANNUAL_PAG_IBIG, value: '', explanation: '-' },
-    { name: ANNUAL_DEDUCTIONS, value: '', explanation: '-' },
+    { name: ANNUAL_CONTRIBUTIONS, value: '', explanation: '-' },
     { name: ANNUAL_TAXABLE_INCOME, value: '', explanation: '-' },
     { name: ANNUAL_GROSS_INCOME, value: '', explanation: '-' },
     { name: ANNUAL_INCOME_TAX, value: '', explanation: '-' },
@@ -97,14 +97,39 @@ export default function Page() {
     return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
+  const formatUpToTwoDecimals = (rawValue: string) => {
+    const cleaned = rawValue.replace(/,/g, '').replace(/[^\d.]/g, '');
+    if (!cleaned) return '';
+
+    const firstDotIndex = cleaned.indexOf('.');
+    const hasDot = firstDotIndex !== -1;
+    const normalized = hasDot
+      ? `${cleaned.slice(0, firstDotIndex)}.${cleaned
+          .slice(firstDotIndex + 1)
+          .replace(/\./g, '')}`
+      : cleaned;
+
+    const [intPartRaw = '', decimalRaw = ''] = normalized.split('.');
+    const intDigits = intPartRaw.replace(/\D/g, '');
+    const intPart = intDigits ? formatWholeNumber(intDigits) : '0';
+    const decimalPart = decimalRaw.replace(/\D/g, '').slice(0, 2);
+
+    if (hasDot) {
+      return `${intPart}.${decimalPart}`;
+    }
+
+    return intPartRaw ? intPart : '';
+  };
+
   const onChangeNumericInput = (
     rawValue: string,
     setInput: React.Dispatch<React.SetStateAction<string>>,
     setNumber: React.Dispatch<React.SetStateAction<number>>
   ) => {
-    const digitsOnly = rawValue.replace(/[^\d]/g, '');
-    setInput(formatWholeNumber(digitsOnly));
-    setNumber(digitsOnly ? Number(digitsOnly) : 0);
+    const formatted = formatUpToTwoDecimals(rawValue);
+    const normalized = formatted.replace(/,/g, '');
+    setInput(formatted);
+    setNumber(normalized && normalized !== '.' ? Number(normalized) : 0);
   };
 
   const selectAllOnFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -153,9 +178,9 @@ export default function Page() {
         explanation: calculator.annualPagIbigExplanation,
       },
       {
-        name: ANNUAL_DEDUCTIONS,
-        value: formatPhpCurrency(calculator.annualDeductions),
-        explanation: calculator.annualDeductionsExplanation,
+        name: ANNUAL_CONTRIBUTIONS,
+        value: formatPhpCurrency(calculator.annualContributions),
+        explanation: calculator.annualContributionsExplanation,
       },
       {
         name: ANNUAL_TAXABLE_INCOME,
@@ -254,7 +279,7 @@ export default function Page() {
         </Typography>
         <Typography variant='subtitle1' color='text.secondary'>
           Enter annual income and annual bonuses/allowances. Government
-          deductions are computed from annual income.
+          contributions are computed from annual income.
         </Typography>
         <StackVertical spacing={2}>
           <StackHorizontal spacing={2.5} rotateOnSmall={{ spacing: 2 }}>
@@ -263,7 +288,7 @@ export default function Page() {
             prefix='₱'
             type='text'
             value={annualIncomeInput}
-            inputProps={{ inputMode: 'numeric' }}
+            inputProps={{ inputMode: 'decimal' }}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
@@ -285,7 +310,7 @@ export default function Page() {
             prefix='₱'
             type='text'
             value={annualBonusesAndAllowancesInput}
-            inputProps={{ inputMode: 'numeric' }}
+            inputProps={{ inputMode: 'decimal' }}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
@@ -321,103 +346,140 @@ export default function Page() {
   );
 
   const quickStats = calculatorSnapshot && (
+    (() => {
+      const quickStatCardSx = {
+        flex: 1,
+        minHeight: 168,
+        display: 'flex',
+        flexDirection: 'column' as const,
+        borderRadius: 3,
+        padding: 2,
+      };
+
+      const quickStatTitleSx = {
+        minHeight: 44,
+        lineHeight: 1.25,
+        display: 'flex',
+        alignItems: 'flex-start',
+      };
+
+      const quickStatValueSx = {
+        mt: 'auto',
+        lineHeight: 1.1,
+      };
+
+      return (
     <StackVertical spacing={2}>
-      <StackHorizontal spacing={2} rotateOnSmall={{ spacing: 2 }}>
+      <StackHorizontal spacing={2} rotateOnSmall={{ spacing: 2 }} sx={{ alignItems: 'stretch' }}>
         <Paper
           sx={{
-            borderRadius: 3,
+            ...quickStatCardSx,
             backgroundColor: alpha(theme.palette.primary.main, 0.09),
             border: `1px solid ${alpha(theme.palette.primary.main, 0.22)}`,
-            padding: 2,
           }}
         >
-          <Typography variant='subtitle1' color='text.secondary'>
+          <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
             Annual Gross
           </Typography>
-          <Typography variant='h2' sx={{ color: theme.palette.primary.main }}>
+          <Typography variant='h2' sx={{ ...quickStatValueSx, color: theme.palette.primary.main }}>
             {formatPhpCurrency(calculatorSnapshot.annualGrossIncome)}
           </Typography>
         </Paper>
         <Paper
           sx={{
-            borderRadius: 3,
+            ...quickStatCardSx,
             backgroundColor: alpha(theme.palette.success.main, 0.09),
             border: `1px solid ${alpha(theme.palette.success.main, 0.22)}`,
-            padding: 2,
           }}
         >
-          <Typography variant='subtitle1' color='text.secondary'>
+          <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
             Annual Net
           </Typography>
-          <Typography variant='h2' sx={{ color: theme.palette.success.main }}>
+          <Typography variant='h2' sx={{ ...quickStatValueSx, color: theme.palette.success.main }}>
             {formatPhpCurrency(calculatorSnapshot.annualNetIncome)}
           </Typography>
         </Paper>
         <Paper
           sx={{
-            borderRadius: 3,
+            ...quickStatCardSx,
             backgroundColor: alpha(theme.palette.success.main, 0.09),
             border: `1px solid ${alpha(theme.palette.success.main, 0.22)}`,
-            padding: 2,
           }}
         >
-          <Typography variant='subtitle1' color='text.secondary'>
+          <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
             Net Income Ratio (Net/Gross)
           </Typography>
-          <Typography variant='h2' sx={{ color: theme.palette.success.main }}>
+          <Typography variant='h2' sx={{ ...quickStatValueSx, color: theme.palette.success.main }}>
             {calculatorSnapshot.annualNetToGrossRate.toFixed(2)}%
           </Typography>
         </Paper>
       </StackHorizontal>
 
-      <StackHorizontal spacing={2} rotateOnSmall={{ spacing: 2 }}>
+      <StackHorizontal spacing={2} rotateOnSmall={{ spacing: 2 }} sx={{ alignItems: 'stretch' }}>
         <Paper
           sx={{
-            borderRadius: 3,
+            ...quickStatCardSx,
             backgroundColor: alpha(theme.palette.warning.main, 0.09),
             border: `1px solid ${alpha(theme.palette.warning.main, 0.22)}`,
-            padding: 2,
           }}
         >
-          <Typography variant='subtitle1' color='text.secondary'>
+          <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
             Annual Deductions
           </Typography>
-          <Typography variant='h2' sx={{ color: theme.palette.warning.main }}>
-            {formatPhpCurrency(calculatorSnapshot.annualDeductions)}
+          <Typography variant='h2' sx={{ ...quickStatValueSx, color: theme.palette.warning.main }}>
+            {formatPhpCurrency(
+              calculatorSnapshot.annualContributions.plus(
+                calculatorSnapshot.annualIncomeTax
+              )
+            )}
           </Typography>
         </Paper>
         <Paper
           sx={{
-            borderRadius: 3,
-            backgroundColor: alpha(theme.palette.error.main, 0.09),
-            border: `1px solid ${alpha(theme.palette.error.main, 0.22)}`,
-            padding: 2,
+            ...quickStatCardSx,
+            backgroundColor: alpha(theme.palette.warning.main, 0.09),
+            border: `1px solid ${alpha(theme.palette.warning.main, 0.22)}`,
           }}
         >
-          <Typography variant='subtitle1' color='text.secondary'>
+          <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
+            Annual Contributions
+          </Typography>
+          <Typography variant='h2' sx={{ ...quickStatValueSx, color: theme.palette.warning.main }}>
+            {formatPhpCurrency(calculatorSnapshot.annualContributions)}
+          </Typography>
+        </Paper>
+        <Paper
+          sx={{
+            ...quickStatCardSx,
+            backgroundColor: alpha(theme.palette.error.main, 0.09),
+            border: `1px solid ${alpha(theme.palette.error.main, 0.22)}`,
+          }}
+        >
+          <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
             Annual Tax
           </Typography>
-          <Typography variant='h2' sx={{ color: theme.palette.error.main }}>
+          <Typography variant='h2' sx={{ ...quickStatValueSx, color: theme.palette.error.main }}>
             {formatPhpCurrency(calculatorSnapshot.annualIncomeTax)}
           </Typography>
         </Paper>
         <Paper
           sx={{
-            borderRadius: 3,
+            ...quickStatCardSx,
             backgroundColor: alpha(theme.palette.primary.main, 0.09),
             border: `1px solid ${alpha(theme.palette.primary.main, 0.22)}`,
-            padding: 2,
           }}
         >
-          <Typography variant='subtitle1' color='text.secondary'>
+          <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
             Effective Tax Rate
           </Typography>
-          <Typography variant='h2' sx={{ color: theme.palette.primary.main }}>
+          <Typography variant='h2' sx={{ ...quickStatValueSx, color: theme.palette.primary.main }}>
             {calculatorSnapshot.annualEffectiveTaxRate.toFixed(2)}%
           </Typography>
         </Paper>
       </StackHorizontal>
     </StackVertical>
+      );
+    })()
   );
 
   const output = (
@@ -450,7 +512,7 @@ export default function Page() {
               },
               {
                 id: 'group-annual-deductions',
-                name: 'Annual Deductions',
+                name: 'Annual Contributions',
                 value: '',
                 explanation: '',
                 isGroup: true,
@@ -468,8 +530,8 @@ export default function Page() {
                 ...resultByName[ANNUAL_PAG_IBIG],
               },
               {
-                id: ANNUAL_DEDUCTIONS,
-                ...resultByName[ANNUAL_DEDUCTIONS],
+                id: ANNUAL_CONTRIBUTIONS,
+                ...resultByName[ANNUAL_CONTRIBUTIONS],
               },
               {
                 id: 'group-annual-results',

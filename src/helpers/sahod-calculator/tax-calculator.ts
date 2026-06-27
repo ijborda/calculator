@@ -11,6 +11,7 @@ export class TaxCalculator {
   public monthlySss: BigNumber;
   public monthlyPhilHealth: BigNumber;
   public monthlyPagIbig: BigNumber;
+  public monthlyContributions: BigNumber;
   public monthlyDeductions: BigNumber;
   public monthlyTaxableIncome: BigNumber;
   public monthlyIncomeTax: BigNumber;
@@ -18,6 +19,7 @@ export class TaxCalculator {
 
   // Annual values
   public annualGrossIncome: BigNumber;
+  public annualContributions: BigNumber;
   public annualDeductions: BigNumber;
   public annualTaxableIncome: BigNumber;
   public annualEffectiveTaxRate: BigNumber;
@@ -58,6 +60,7 @@ export class TaxCalculator {
     this.monthlyPagIbig = this.getMonthlyPagIbig();
     this.monthlyDeductions =
       this.monthlySss.plus(this.monthlyPhilHealth).plus(this.monthlyPagIbig);
+    this.monthlyContributions = this.monthlyDeductions;
     this.monthlyTaxableIncome = BigNumber.max(
       this.monthlyBasicIncome.minus(this.monthlyDeductions),
       0
@@ -65,6 +68,7 @@ export class TaxCalculator {
 
     this.annualGrossIncome = this.money(this.monthlyBasicIncome.multipliedBy(12));
     this.annualDeductions = this.money(this.monthlyDeductions.multipliedBy(12));
+    this.annualContributions = this.annualDeductions;
     this.annualTaxableIncome = this.money(
       this.monthlyTaxableIncome.multipliedBy(12)
     );
@@ -117,6 +121,10 @@ export class TaxCalculator {
     return this._monthlyDeductionsExplanation;
   }
 
+  public get monthlyContributionsExplanation() {
+    return this._monthlyDeductionsExplanation;
+  }
+
   public get monthlyTaxableIncomeExplanation() {
     return this._monthlyTaxableIncomeExplanation;
   }
@@ -134,6 +142,10 @@ export class TaxCalculator {
   }
 
   public get annualDeductionsExplanation() {
+    return this._annualDeductionsExplanation;
+  }
+
+  public get annualContributionsExplanation() {
     return this._annualDeductionsExplanation;
   }
 
@@ -299,7 +311,7 @@ export class TaxCalculator {
       fmtMonthlyDeductions,
     } = this.getfmtValues();
     return `
-      Monthly deductions are SSS + PhilHealth + Pag-IBIG.
+      Monthly contributions are SSS + PhilHealth + Pag-IBIG.
       So, ${fmtMonthlySss} + ${fmtMonthlyPhilHealth} + ${fmtMonthlyPagIbig} = ${fmtMonthlyDeductions}.
     `;
   }
@@ -311,7 +323,7 @@ export class TaxCalculator {
       fmtMonthlyTaxableIncome,
     } = this.getfmtValues();
     return `
-      Monthly taxable income is monthly basic income minus monthly deductions.
+      Monthly taxable income is monthly basic income minus monthly contributions.
       So, ${fmtMonthlyBasicIncome} - ${fmtMonthlyDeductions} = ${fmtMonthlyTaxableIncome}.
     `;
   }
@@ -332,7 +344,7 @@ export class TaxCalculator {
       fmtMonthlyTakeHomePay,
     } = this.getfmtValues();
     return `
-      Monthly take home pay is monthly basic income minus monthly deductions minus monthly income tax.
+      Monthly take home pay is monthly basic income minus monthly contributions minus monthly income tax.
       So, ${fmtMonthlyBasicIncome} - ${fmtMonthlyDeductions} - ${fmtMonthlyIncomeTax} = ${fmtMonthlyTakeHomePay}.
     `;
   }
@@ -348,7 +360,7 @@ export class TaxCalculator {
   private getAnnualDeductionsExplanation() {
     const { fmtMonthlyDeductions, fmtAnnualDeductions } = this.getfmtValues();
     return `
-      Annual deductions are monthly deductions multiplied by 12.
+      Annual contributions are monthly contributions multiplied by 12.
       So, ${fmtMonthlyDeductions} * 12 = ${fmtAnnualDeductions}.
     `;
   }
@@ -361,10 +373,10 @@ export class TaxCalculator {
     } = this.getfmtValues();
     return `
       Your annual taxable income is ${fmtannualTaxableIncome}.
-      This is annual gross income minus annual deductions.
+      This is annual gross income minus annual contributions.
       So, ${fmtAnnualGrossIncome} - ${fmtAnnualDeductions} = ${fmtannualTaxableIncome}.
       <br/>
-      Annual deductions include government mandated benefits such as SSS, Pag-IBIG, and PhilHealth.
+      Annual contributions include government mandated benefits such as SSS, Pag-IBIG, and PhilHealth.
     `;
   }
 
@@ -470,7 +482,7 @@ export class TaxCalculator {
     } =
       this.getfmtValues();
     return `
-      Your annual gross income is ${fmtAnnualGrossIncome}, annual deductions are ${fmtAnnualDeductions}, and annual income tax is ${fmtIncomeTax}.
+      Your annual gross income is ${fmtAnnualGrossIncome}, annual contributions are ${fmtAnnualDeductions}, and annual income tax is ${fmtIncomeTax}.
       Then your annual net income is ${fmtAnnualGrossIncome} - ${fmtAnnualDeductions} - ${fmtIncomeTax} = ${fmtNetIncome}.
     `;
   }

@@ -32,12 +32,12 @@ export default function Page() {
     MONTHLY_SSS,
     MONTHLY_PHILHEALTH,
     MONTHLY_PAG_IBIG,
-    MONTHLY_DEDUCTIONS,
+    MONTHLY_CONTRIBUTIONS,
     MONTHLY_TAXABLE_INCOME,
     MONTHLY_INCOME_TAX,
     MONTHLY_TAKE_HOME_PAY,
     ANNUAL_GROSS_INCOME,
-    ANNUAL_DEDUCTIONS,
+    ANNUAL_CONTRIBUTIONS,
     ANNUAL_TAXABLE_INCOME,
     ANNUAL_INCOME_TAX,
     ANNUAL_EFFECTIVE_TAX_RATE,
@@ -69,7 +69,7 @@ export default function Page() {
       explanation: '-',
     },
     {
-      name: MONTHLY_DEDUCTIONS,
+      name: MONTHLY_CONTRIBUTIONS,
       value: '',
       explanation: '-',
     },
@@ -94,7 +94,7 @@ export default function Page() {
       explanation: '-',
     },
     {
-      name: ANNUAL_DEDUCTIONS,
+      name: ANNUAL_CONTRIBUTIONS,
       value: '',
       explanation: '-',
     },
@@ -167,14 +167,39 @@ export default function Page() {
     return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
+  const formatUpToTwoDecimals = (rawValue: string) => {
+    const cleaned = rawValue.replace(/,/g, '').replace(/[^\d.]/g, '');
+    if (!cleaned) return '';
+
+    const firstDotIndex = cleaned.indexOf('.');
+    const hasDot = firstDotIndex !== -1;
+    const normalized = hasDot
+      ? `${cleaned.slice(0, firstDotIndex)}.${cleaned
+          .slice(firstDotIndex + 1)
+          .replace(/\./g, '')}`
+      : cleaned;
+
+    const [intPartRaw = '', decimalRaw = ''] = normalized.split('.');
+    const intDigits = intPartRaw.replace(/\D/g, '');
+    const intPart = intDigits ? formatWholeNumber(intDigits) : '0';
+    const decimalPart = decimalRaw.replace(/\D/g, '').slice(0, 2);
+
+    if (hasDot) {
+      return `${intPart}.${decimalPart}`;
+    }
+
+    return intPartRaw ? intPart : '';
+  };
+
   const onChangeNumericInput = (
     rawValue: string,
     setInput: React.Dispatch<React.SetStateAction<string>>,
     setNumber: React.Dispatch<React.SetStateAction<number>>
   ) => {
-    const digitsOnly = rawValue.replace(/[^\d]/g, '');
-    setInput(formatWholeNumber(digitsOnly));
-    setNumber(digitsOnly ? Number(digitsOnly) : 0);
+    const formatted = formatUpToTwoDecimals(rawValue);
+    const normalized = formatted.replace(/,/g, '');
+    setInput(formatted);
+    setNumber(normalized && normalized !== '.' ? Number(normalized) : 0);
   };
 
   const selectAllOnFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -214,9 +239,9 @@ export default function Page() {
         explanation: taxCalculator.monthlyPagIbigExplanation,
       },
       {
-        name: MONTHLY_DEDUCTIONS,
-        value: formatPhpCurrency(taxCalculator.monthlyDeductions),
-        explanation: taxCalculator.monthlyDeductionsExplanation,
+        name: MONTHLY_CONTRIBUTIONS,
+        value: formatPhpCurrency(taxCalculator.monthlyContributions),
+        explanation: taxCalculator.monthlyContributionsExplanation,
       },
       {
         name: MONTHLY_TAXABLE_INCOME,
@@ -239,9 +264,9 @@ export default function Page() {
         explanation: taxCalculator.annualGrossIncomeExplanation,
       },
       {
-        name: ANNUAL_DEDUCTIONS,
-        value: formatPhpCurrency(taxCalculator.annualDeductions),
-        explanation: taxCalculator.annualDeductionsExplanation,
+        name: ANNUAL_CONTRIBUTIONS,
+        value: formatPhpCurrency(taxCalculator.annualContributions),
+        explanation: taxCalculator.annualContributionsExplanation,
       },
       {
         name: ANNUAL_TAXABLE_INCOME,
@@ -352,7 +377,7 @@ export default function Page() {
           prefix='₱'
           type='text'
           value={monthlyBasicIncomeInput}
-          inputProps={{ inputMode: 'numeric' }}
+          inputProps={{ inputMode: 'decimal' }}
           sx={{
             '& .MuiOutlinedInput-root': {
               borderRadius: 2,
@@ -387,68 +412,141 @@ export default function Page() {
   );
 
   const quickStats = calculatorSnapshot && (
-    <StackHorizontal spacing={2} rotateOnSmall={{ spacing: 2 }}>
+    (() => {
+      const quickStatCardSx = {
+        flex: 1,
+        minHeight: 168,
+        display: 'flex',
+        flexDirection: 'column' as const,
+        borderRadius: 3,
+        padding: 2,
+      };
+
+      const quickStatTitleSx = {
+        minHeight: 44,
+        lineHeight: 1.25,
+        display: 'flex',
+        alignItems: 'flex-start',
+      };
+
+      const quickStatValueSx = {
+        mt: 'auto',
+        lineHeight: 1.1,
+      };
+
+      return (
+    <StackHorizontal
+      spacing={2}
+      rotateOnSmall={{ spacing: 2 }}
+      sx={{ alignItems: 'stretch' }}
+    >
       <Paper
         sx={{
-          borderRadius: 3,
+          ...quickStatCardSx,
           backgroundColor: alpha(theme.palette.success.main, 0.09),
           border: `1px solid ${alpha(theme.palette.success.main, 0.22)}`,
-          padding: 2,
         }}
       >
-        <Typography variant='subtitle1' color='text.secondary'>
+        <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
           Monthly Take Home
         </Typography>
-        <Typography variant='h2' sx={{ color: theme.palette.success.main }}>
+        <Typography
+          variant='h2'
+          sx={{
+            ...quickStatValueSx,
+            color: theme.palette.success.main,
+          }}
+        >
           {formatPhpCurrency(calculatorSnapshot.monthlyTakeHomePay)}
         </Typography>
       </Paper>
       <Paper
         sx={{
-          borderRadius: 3,
-          backgroundColor: alpha(theme.palette.warning.main, 0.09),
-          border: `1px solid ${alpha(theme.palette.warning.main, 0.22)}`,
-          padding: 2,
+          ...quickStatCardSx,
+          backgroundColor: alpha(theme.palette.error.main, 0.09),
+          border: `1px solid ${alpha(theme.palette.error.main, 0.22)}`,
         }}
       >
-        <Typography variant='subtitle1' color='text.secondary'>
+        <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
           Monthly Deductions
         </Typography>
-        <Typography variant='h2' sx={{ color: theme.palette.warning.main }}>
-          {formatPhpCurrency(calculatorSnapshot.monthlyDeductions)}
+        <Typography
+          variant='h2'
+          sx={{
+            ...quickStatValueSx,
+            color: theme.palette.error.main,
+          }}
+        >
+          {formatPhpCurrency(
+            calculatorSnapshot.monthlyContributions.plus(
+              calculatorSnapshot.monthlyIncomeTax
+            )
+          )}
         </Typography>
       </Paper>
       <Paper
         sx={{
-          borderRadius: 3,
-          backgroundColor: alpha(theme.palette.primary.main, 0.09),
-          border: `1px solid ${alpha(theme.palette.primary.main, 0.22)}`,
-          padding: 2,
+          ...quickStatCardSx,
+          backgroundColor: alpha(theme.palette.warning.main, 0.09),
+          border: `1px solid ${alpha(theme.palette.warning.main, 0.22)}`,
         }}
       >
-        <Typography variant='subtitle1' color='text.secondary'>
+        <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
+          Monthly Contributions
+        </Typography>
+        <Typography
+          variant='h2'
+          sx={{
+            ...quickStatValueSx,
+            color: theme.palette.warning.main,
+          }}
+        >
+          {formatPhpCurrency(calculatorSnapshot.monthlyContributions)}
+        </Typography>
+      </Paper>
+      <Paper
+        sx={{
+          ...quickStatCardSx,
+          backgroundColor: alpha(theme.palette.primary.main, 0.09),
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.22)}`,
+        }}
+      >
+        <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
           Monthly Tax
         </Typography>
-        <Typography variant='h2' sx={{ color: theme.palette.primary.main }}>
+        <Typography
+          variant='h2'
+          sx={{
+            ...quickStatValueSx,
+            color: theme.palette.primary.main,
+          }}
+        >
           {formatPhpCurrency(calculatorSnapshot.monthlyIncomeTax)}
         </Typography>
       </Paper>
       <Paper
         sx={{
-          borderRadius: 3,
+          ...quickStatCardSx,
           backgroundColor: alpha(theme.palette.primary.main, 0.09),
           border: `1px solid ${alpha(theme.palette.primary.main, 0.22)}`,
-          padding: 2,
         }}
       >
-        <Typography variant='subtitle1' color='text.secondary'>
+        <Typography variant='subtitle1' color='text.secondary' sx={quickStatTitleSx}>
           Effective Tax Rate
         </Typography>
-        <Typography variant='h2' sx={{ color: theme.palette.primary.main }}>
+        <Typography
+          variant='h2'
+          sx={{
+            ...quickStatValueSx,
+            color: theme.palette.primary.main,
+          }}
+        >
           {`${calculatorSnapshot.annualEffectiveTaxRate.toFixed(2)}%`}
         </Typography>
       </Paper>
     </StackHorizontal>
+      );
+    })()
   );
 
   const output = (
@@ -488,8 +586,26 @@ export default function Page() {
                 ...resultByName[MONTHLY_PAG_IBIG],
               },
               {
-                id: MONTHLY_DEDUCTIONS,
-                ...resultByName[MONTHLY_DEDUCTIONS],
+                id: MONTHLY_CONTRIBUTIONS,
+                ...resultByName[MONTHLY_CONTRIBUTIONS],
+              },
+              {
+                id: 'monthly-breakdown-income-tax',
+                ...resultByName[MONTHLY_INCOME_TAX],
+              },
+              {
+                id: 'monthly-breakdown-total-deductions',
+                name: 'Monthly Deductions',
+                value: formatPhpCurrency(
+                  calculatorSnapshot!.monthlyContributions.plus(
+                    calculatorSnapshot!.monthlyIncomeTax
+                  )
+                ),
+                explanation: `Monthly deductions are monthly contributions plus monthly income tax.<br/>So, ${resultByName[MONTHLY_CONTRIBUTIONS].value} + ${resultByName[MONTHLY_INCOME_TAX].value} = ${formatPhpCurrency(
+                  calculatorSnapshot!.monthlyContributions.plus(
+                    calculatorSnapshot!.monthlyIncomeTax
+                  )
+                )}.`,
               },
               {
                 id: MONTHLY_TAXABLE_INCOME,
@@ -507,8 +623,8 @@ export default function Page() {
                 ...resultByName[ANNUAL_GROSS_INCOME],
               },
               {
-                id: ANNUAL_DEDUCTIONS,
-                ...resultByName[ANNUAL_DEDUCTIONS],
+                id: ANNUAL_CONTRIBUTIONS,
+                ...resultByName[ANNUAL_CONTRIBUTIONS],
               },
               {
                 id: ANNUAL_TAXABLE_INCOME,
@@ -534,17 +650,37 @@ export default function Page() {
                 isGroup: true,
               },
               {
-                id: 'summary-monthly-deductions',
-                name: 'Monthly Deductions',
-                value: resultByName[MONTHLY_DEDUCTIONS].value,
-                explanation: resultByName[MONTHLY_DEDUCTIONS].explanation,
-              },
-              {
-                id: MONTHLY_INCOME_TAX,
+                id: 'monthly-summary-income-tax',
                 ...resultByName[MONTHLY_INCOME_TAX],
               },
               {
-                id: MONTHLY_TAKE_HOME_PAY,
+                id: 'monthly-summary-contributions',
+                name: 'Monthly Contributions',
+                value: resultByName[MONTHLY_CONTRIBUTIONS].value,
+                explanation: resultByName[MONTHLY_CONTRIBUTIONS].explanation,
+              },
+              {
+                id: 'monthly-summary-deductions',
+                name: 'Monthly Deductions',
+                value: formatPhpCurrency(
+                  calculatorSnapshot!.monthlyContributions.plus(
+                    calculatorSnapshot!.monthlyIncomeTax
+                  )
+                ),
+                explanation: `Monthly deductions are monthly contributions plus monthly income tax.<br/>So, ${resultByName[MONTHLY_CONTRIBUTIONS].value} + ${resultByName[MONTHLY_INCOME_TAX].value} = ${formatPhpCurrency(
+                  calculatorSnapshot!.monthlyContributions.plus(
+                    calculatorSnapshot!.monthlyIncomeTax
+                  )
+                )}.`,
+              },
+              {
+                id: 'monthly-summary-gross-pay',
+                name: 'Monthly Gross Pay',
+                value: resultByName[MONTHLY_BASIC_INCOME].value,
+                explanation: 'Monthly gross pay is your monthly basic income before contributions and income tax.',
+              },
+              {
+                id: 'monthly-summary-take-home-pay',
                 ...resultByName[MONTHLY_TAKE_HOME_PAY],
               },
             ];
@@ -573,7 +709,6 @@ export default function Page() {
                 rows={detailsRows}
                 getRowClassName={({ row }) => {
                   if (row?.isGroup) return 'group-row';
-                  if (String(row?.id).startsWith('summary-')) return 'summary-row';
                   return 'regular-row';
                 }}
                 sx={{
@@ -621,13 +756,6 @@ export default function Page() {
                     )}`,
                     minHeight: '52px !important',
                     py: 1.5,
-                  },
-                  '& .MuiDataGrid-row.summary-row': {
-                    backgroundColor: alpha(theme.palette.success.main, 0.06),
-                  },
-                  '& .MuiDataGrid-row.summary-row .MuiDataGrid-cell': {
-                    fontWeight: 600,
-                    py: 1.4,
                   },
                   '& .MuiDataGrid-row.regular-row:nth-of-type(even)': {
                     backgroundColor: alpha(theme.palette.common.white, 0.55),

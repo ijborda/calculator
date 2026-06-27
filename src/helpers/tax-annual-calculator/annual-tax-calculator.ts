@@ -13,7 +13,7 @@ export class AnnualTaxCalculator {
   public annualSss: BigNumber;
   public annualPhilHealth: BigNumber;
   public annualPagIbig: BigNumber;
-  public annualDeductions: BigNumber;
+  public annualContributions: BigNumber;
   public annualTaxableIncome: BigNumber;
   public annualGrossIncome: BigNumber;
   public annualIncomeTax: BigNumber;
@@ -41,7 +41,7 @@ export class AnnualTaxCalculator {
     this.annualSss = this.money(this.getMonthlySss().multipliedBy(12));
     this.annualPhilHealth = this.money(this.getMonthlyPhilHealth().multipliedBy(12));
     this.annualPagIbig = this.money(this.getMonthlyPagIbig().multipliedBy(12));
-    this.annualDeductions = this.money(
+    this.annualContributions = this.money(
       this.annualSss.plus(this.annualPhilHealth).plus(this.annualPagIbig)
     );
 
@@ -51,7 +51,9 @@ export class AnnualTaxCalculator {
 
     this.annualTaxableIncome = this.money(
       BigNumber.max(
-        this.annualIncome.minus(this.annualDeductions).plus(taxableBonusPortion),
+        this.annualIncome
+          .minus(this.annualContributions)
+          .plus(taxableBonusPortion),
         0
       )
     );
@@ -67,7 +69,9 @@ export class AnnualTaxCalculator {
     this.annualIncomeTax = this.getAnnualIncomeTax();
     this.annualEffectiveTaxRate = this.getAnnualEffectiveTaxRate();
     this.annualNetIncome = this.money(
-      this.annualGrossIncome.minus(this.annualDeductions).minus(this.annualIncomeTax)
+      this.annualGrossIncome
+        .minus(this.annualContributions)
+        .minus(this.annualIncomeTax)
     );
     this.annualNetToGrossRate = this.getAnnualNetToGrossRate();
   }
@@ -75,7 +79,7 @@ export class AnnualTaxCalculator {
   public get annualIncomeExplanation() {
     const { fmtAnnualIncome } = this.getFmtValues();
     return `
-      Annual income is the earnings base used to compute mandatory deductions.
+      Annual income is the earnings base used to compute mandatory contributions.
       <br/>
       Input annual income: ${fmtAnnualIncome}.
     `;
@@ -127,37 +131,41 @@ export class AnnualTaxCalculator {
     `;
   }
 
-  public get annualDeductionsExplanation() {
+  public get annualContributionsExplanation() {
     const {
-      fmtAnnualDeductions,
+      fmtAnnualContributions,
       fmtAnnualSss,
       fmtAnnualPhilHealth,
       fmtAnnualPagIbig,
     } = this.getFmtValues();
     return `
-      Annual deductions are the sum of annual SSS, PhilHealth, and Pag-IBIG.
+      Annual contributions are the sum of annual SSS, PhilHealth, and Pag-IBIG.
       <br/>
-      So, ${fmtAnnualSss} + ${fmtAnnualPhilHealth} + ${fmtAnnualPagIbig} = ${fmtAnnualDeductions}.
+      So, ${fmtAnnualSss} + ${fmtAnnualPhilHealth} + ${fmtAnnualPagIbig} = ${fmtAnnualContributions}.
     `;
+  }
+
+  public get annualDeductionsExplanation() {
+    return this.annualContributionsExplanation;
   }
 
   public get annualTaxableIncomeExplanation() {
     const {
       fmtAnnualIncome,
-      fmtAnnualDeductions,
+      fmtAnnualContributions,
       fmtTaxFreeBonusThreshold,
       fmtAnnualBonusesAndAllowances,
       fmtTaxableBonusPortion,
       fmtAnnualTaxableIncome,
     } = this.getFmtValues();
     return `
-      Annual taxable income is annual income minus annual deductions, plus taxable bonus portion.
+      Annual taxable income is annual income minus annual contributions, plus taxable bonus portion.
       <br/>
       The first ${fmtTaxFreeBonusThreshold} of bonuses and allowances is tax free.
       <br/>
       Taxable bonus portion = max(${fmtAnnualBonusesAndAllowances} - ${fmtTaxFreeBonusThreshold}, 0) = ${fmtTaxableBonusPortion}.
       <br/>
-      So, ${fmtAnnualIncome} - ${fmtAnnualDeductions} + ${fmtTaxableBonusPortion} = ${fmtAnnualTaxableIncome}.
+      So, ${fmtAnnualIncome} - ${fmtAnnualContributions} + ${fmtTaxableBonusPortion} = ${fmtAnnualTaxableIncome}.
     `;
   }
 
@@ -242,16 +250,20 @@ export class AnnualTaxCalculator {
   public get annualNetIncomeExplanation() {
     const {
       fmtAnnualGrossIncome,
-      fmtAnnualDeductions,
+      fmtAnnualContributions,
       fmtAnnualIncomeTax,
       fmtAnnualNetIncome,
     } =
       this.getFmtValues();
     return `
-      Annual net income is annual gross income minus annual deductions minus annual income tax.
+      Annual net income is annual gross income minus annual contributions minus annual income tax.
       <br/>
-      So, ${fmtAnnualGrossIncome} - ${fmtAnnualDeductions} - ${fmtAnnualIncomeTax} = ${fmtAnnualNetIncome}.
+      So, ${fmtAnnualGrossIncome} - ${fmtAnnualContributions} - ${fmtAnnualIncomeTax} = ${fmtAnnualNetIncome}.
     `;
+  }
+
+  public get annualDeductions() {
+    return this.annualContributions;
   }
 
   private getMonthlySss() {
@@ -319,7 +331,7 @@ export class AnnualTaxCalculator {
     const fmtAnnualSss = formatPhpCurrency(this.annualSss);
     const fmtAnnualPhilHealth = formatPhpCurrency(this.annualPhilHealth);
     const fmtAnnualPagIbig = formatPhpCurrency(this.annualPagIbig);
-    const fmtAnnualDeductions = formatPhpCurrency(this.annualDeductions);
+    const fmtAnnualContributions = formatPhpCurrency(this.annualContributions);
     const taxableBonusPortion = this.money(
       BigNumber.max(this.annualBonusesAndAllowances.minus(TAX_FREE_BONUS_THRESHOLD), 0)
     );
@@ -353,7 +365,7 @@ export class AnnualTaxCalculator {
       fmtAnnualSss,
       fmtAnnualPhilHealth,
       fmtAnnualPagIbig,
-      fmtAnnualDeductions,
+      fmtAnnualContributions,
       fmtTaxFreeBonusThreshold,
       fmtTaxableBonusPortion,
       fmtAnnualTaxableIncome,
