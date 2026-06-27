@@ -35,10 +35,14 @@ export default function Component(props: Props & TextFieldProps): ReactElement {
         sx={props.sx}
         value={props.value}
         onChange={props.onChange}
+        onFocus={props.onFocus}
+        onClick={props.onClick}
+        onBlur={props.onBlur}
         required={props.required}
         error={props.error}
         helperText={props.helperText}
         disabled={props.disabled}
+        inputProps={props.inputProps}
         multiline={props.multiline}
         rows={props.rows}
         minRows={props.minRows || (props.multiline ? 6 : undefined)}

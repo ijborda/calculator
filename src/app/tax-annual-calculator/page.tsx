@@ -59,6 +59,9 @@ export default function Page() {
   const [annualIncome, setAnnualIncome] = React.useState(0);
   const [annualBonusesAndAllowances, setAnnualBonusesAndAllowances] =
     React.useState(0);
+  const [annualIncomeInput, setAnnualIncomeInput] = React.useState('');
+  const [annualBonusesAndAllowancesInput, setAnnualBonusesAndAllowancesInput] =
+    React.useState('');
 
   const [calculatorSnapshot, setCalculatorSnapshot] =
     React.useState<AnnualTaxCalculator | null>(null);
@@ -87,6 +90,30 @@ export default function Page() {
         {getHelpComponent(name)}
       </StackVertical>
     );
+  };
+
+  const formatWholeNumber = (digitsOnly: string) => {
+    if (!digitsOnly) return '';
+    return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  const onChangeNumericInput = (
+    rawValue: string,
+    setInput: React.Dispatch<React.SetStateAction<string>>,
+    setNumber: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    const digitsOnly = rawValue.replace(/[^\d]/g, '');
+    setInput(formatWholeNumber(digitsOnly));
+    setNumber(digitsOnly ? Number(digitsOnly) : 0);
+  };
+
+  const selectAllOnFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.select();
+  };
+
+  const selectAllOnClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const input = e.currentTarget.querySelector('input');
+    input?.select();
   };
 
   const onClickCompute = async () => {
@@ -234,33 +261,45 @@ export default function Page() {
           <TextField
             label='Annual Income'
             prefix='₱'
-            type='number'
-            value={annualIncome}
+            type='text'
+            value={annualIncomeInput}
+            inputProps={{ inputMode: 'numeric' }}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
                 backgroundColor: alpha(theme.palette.common.white, 0.95),
               },
             }}
+            onFocus={selectAllOnFocus}
+            onClick={selectAllOnClick}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const val = Number(e.target.value);
-              setAnnualIncome(Number.isNaN(val) ? 0 : val);
+              onChangeNumericInput(
+                e.target.value,
+                setAnnualIncomeInput,
+                setAnnualIncome
+              );
             }}
           />
           <TextField
             label='Annual Bonuses and Allowances'
             prefix='₱'
-            type='number'
-            value={annualBonusesAndAllowances}
+            type='text'
+            value={annualBonusesAndAllowancesInput}
+            inputProps={{ inputMode: 'numeric' }}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
                 backgroundColor: alpha(theme.palette.common.white, 0.95),
               },
             }}
+            onFocus={selectAllOnFocus}
+            onClick={selectAllOnClick}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const val = Number(e.target.value);
-              setAnnualBonusesAndAllowances(Number.isNaN(val) ? 0 : val);
+              onChangeNumericInput(
+                e.target.value,
+                setAnnualBonusesAndAllowancesInput,
+                setAnnualBonusesAndAllowances
+              );
             }}
           />
           </StackHorizontal>
@@ -578,7 +617,7 @@ export default function Page() {
           </Typography>
           <Typography variant='subtitle1' color='text.secondary'>
             Annual tax summary from taxable and non taxable earnings, including
-            deductions, effective tax rate, and annual net.
+            deductions, effective tax rate, and annual net. Use this to check overall earning and check if your deductions are correct.
           </Typography>
           <Box
             sx={{

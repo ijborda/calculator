@@ -128,6 +128,8 @@ export default function Page() {
   const [isCalculating, setIsCalculating] = React.useState(false);
 
   const [monthlyBasicIncome, setMonthlyBasicIncome] = React.useState(0);
+  const [monthlyBasicIncomeInput, setMonthlyBasicIncomeInput] =
+    React.useState('');
   const [calculatorSnapshot, setCalculatorSnapshot] =
     React.useState<TaxCalculator | null>(null);
   const [results, setResults] = React.useReducer(reducer, initialResults);
@@ -158,6 +160,30 @@ export default function Page() {
         {getHelpComponent(name)}
       </StackVertical>
     );
+  };
+
+  const formatWholeNumber = (digitsOnly: string) => {
+    if (!digitsOnly) return '';
+    return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  const onChangeNumericInput = (
+    rawValue: string,
+    setInput: React.Dispatch<React.SetStateAction<string>>,
+    setNumber: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    const digitsOnly = rawValue.replace(/[^\d]/g, '');
+    setInput(formatWholeNumber(digitsOnly));
+    setNumber(digitsOnly ? Number(digitsOnly) : 0);
+  };
+
+  const selectAllOnFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.select();
+  };
+
+  const selectAllOnClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const input = e.currentTarget.querySelector('input');
+    input?.select();
   };
 
   const onClickCompute = async () => {
@@ -324,17 +350,23 @@ export default function Page() {
         <TextField
           label='Monthly Basic Income'
           prefix='₱'
-          type='number'
-          value={monthlyBasicIncome}
+          type='text'
+          value={monthlyBasicIncomeInput}
+          inputProps={{ inputMode: 'numeric' }}
           sx={{
             '& .MuiOutlinedInput-root': {
               borderRadius: 2,
               backgroundColor: alpha(theme.palette.common.white, 0.95),
             },
           }}
+          onFocus={selectAllOnFocus}
+          onClick={selectAllOnClick}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const val = Number(e.target.value);
-            setMonthlyBasicIncome(Number.isNaN(val) ? 0 : val);
+            onChangeNumericInput(
+              e.target.value,
+              setMonthlyBasicIncomeInput,
+              setMonthlyBasicIncome
+            );
           }}
         ></TextField>
         <LoadingButton
