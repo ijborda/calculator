@@ -40,6 +40,7 @@ export default function Page() {
     ANNUAL_DEDUCTIONS,
     ANNUAL_TAXABLE_INCOME,
     ANNUAL_INCOME_TAX,
+    ANNUAL_EFFECTIVE_TAX_RATE,
     ANNUAL_NET_INCOME,
   } = RESULT_ATTRIBUTES;
 
@@ -104,6 +105,11 @@ export default function Page() {
     },
     {
       name: ANNUAL_INCOME_TAX,
+      value: '',
+      explanation: '-',
+    },
+    {
+      name: ANNUAL_EFFECTIVE_TAX_RATE,
       value: '',
       explanation: '-',
     },
@@ -220,6 +226,11 @@ export default function Page() {
         name: ANNUAL_INCOME_TAX,
         value: formatPhpCurrency(taxCalculator.annualIncomeTax),
         explanation: taxCalculator.annualIncomeTaxExplanation,
+      },
+      {
+        name: ANNUAL_EFFECTIVE_TAX_RATE,
+        value: `${taxCalculator.annualEffectiveTaxRate.toFixed(2)}%`,
+        explanation: taxCalculator.annualEffectiveTaxRateExplanation,
       },
       {
         name: ANNUAL_NET_INCOME,
@@ -390,6 +401,21 @@ export default function Page() {
           {formatPhpCurrency(calculatorSnapshot.monthlyIncomeTax)}
         </Typography>
       </Paper>
+      <Paper
+        sx={{
+          borderRadius: 3,
+          backgroundColor: alpha(theme.palette.primary.main, 0.09),
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.22)}`,
+          padding: 2,
+        }}
+      >
+        <Typography variant='subtitle1' color='text.secondary'>
+          Effective Tax Rate
+        </Typography>
+        <Typography variant='h2' sx={{ color: theme.palette.primary.main }}>
+          {`${calculatorSnapshot.annualEffectiveTaxRate.toFixed(2)}%`}
+        </Typography>
+      </Paper>
     </StackHorizontal>
   );
 
@@ -461,6 +487,10 @@ export default function Page() {
                 ...resultByName[ANNUAL_INCOME_TAX],
               },
               {
+                id: ANNUAL_EFFECTIVE_TAX_RATE,
+                ...resultByName[ANNUAL_EFFECTIVE_TAX_RATE],
+              },
+              {
                 id: ANNUAL_NET_INCOME,
                 ...resultByName[ANNUAL_NET_INCOME],
               },
@@ -493,9 +523,10 @@ export default function Page() {
               borderRadius: 3,
               border: `1px solid ${alpha(theme.palette.primary.main, 0.16)}`,
               backgroundColor: alpha(theme.palette.common.white, 0.94),
+              padding: 1,
             }}
           >
-            <StackVertical spacing={2}>
+            <StackVertical spacing={3}>
               <Typography
                 variant='h4'
                 sx={{ color: theme.palette.text.primary, fontWeight: 700 }}
@@ -517,16 +548,24 @@ export default function Page() {
                   border: 'none',
                   '& .MuiDataGrid-columnHeaders': {
                     backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                    minHeight: '56px !important',
                     borderBottom: `1px solid ${alpha(
                       theme.palette.primary.main,
                       0.2
                     )}`,
+                  },
+                  '& .MuiDataGrid-columnHeader': {
+                    py: 1.25,
                   },
                   '& .MuiDataGrid-columnHeaderTitle': {
                     fontWeight: 700,
                     color: theme.palette.text.primary,
                   },
                   '& .MuiDataGrid-cell': {
+                    py: 1.25,
+                    px: 1.5,
+                    alignItems: 'flex-start',
+                    lineHeight: 1.45,
                     borderBottom: `1px solid ${alpha(
                       theme.palette.text.secondary,
                       0.12
@@ -548,13 +587,15 @@ export default function Page() {
                       theme.palette.primary.main,
                       0.25
                     )}`,
-                    minHeight: '44px !important',
+                    minHeight: '52px !important',
+                    py: 1.5,
                   },
                   '& .MuiDataGrid-row.summary-row': {
                     backgroundColor: alpha(theme.palette.success.main, 0.06),
                   },
                   '& .MuiDataGrid-row.summary-row .MuiDataGrid-cell': {
                     fontWeight: 600,
+                    py: 1.4,
                   },
                   '& .MuiDataGrid-row.regular-row:nth-of-type(even)': {
                     backgroundColor: alpha(theme.palette.common.white, 0.55),

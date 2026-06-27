@@ -1,33 +1,35 @@
 import { TAX_BRACKETS } from '@/constants/sahod-calculator/tax-brackets';
 import { SSS_BRACKETS } from '@/constants/sahod-calculator/sss-brackets';
 import { formatPhpCurrency } from '@/utils/currency';
+import BigNumber from 'bignumber.js';
 
 export class TaxCalculator {
   // Inputs
-  private monthlyBasicIncome: number;
+  private monthlyBasicIncome: BigNumber;
 
   // Monthly values
-  public monthlySss: number;
-  public monthlyPhilHealth: number;
-  public monthlyPagIbig: number;
-  public monthlyDeductions: number;
-  public monthlyTaxableIncome: number;
-  public monthlyIncomeTax: number;
-  public monthlyTakeHomePay: number;
+  public monthlySss: BigNumber;
+  public monthlyPhilHealth: BigNumber;
+  public monthlyPagIbig: BigNumber;
+  public monthlyDeductions: BigNumber;
+  public monthlyTaxableIncome: BigNumber;
+  public monthlyIncomeTax: BigNumber;
+  public monthlyTakeHomePay: BigNumber;
 
   // Annual values
-  public annualGrossIncome: number;
-  public annualDeductions: number;
-  public annualTaxableIncome: number;
+  public annualGrossIncome: BigNumber;
+  public annualDeductions: BigNumber;
+  public annualTaxableIncome: BigNumber;
+  public annualEffectiveTaxRate: BigNumber;
 
   // Tax bracket in use
   private taxBracket: (typeof TAX_BRACKETS)[0];
 
   // Portion of taxable income covered by previous bracket
-  private excessOver: number;
+  private excessOver: BigNumber;
 
   // Portion of taxable income covered by current bracket
-  private excess: number;
+  private excess: BigNumber;
 
   // Outputs
   private _monthlySssExplanation: string;
@@ -39,37 +41,46 @@ export class TaxCalculator {
   private _monthlyTakeHomePayExplanation: string;
   private _annualGrossIncomeExplanation: string;
   private _annualDeductionsExplanation: string;
-  private _annualIncomeTax: number;
+  private _annualIncomeTax: BigNumber;
   private _annualTaxableIncomeExplanation: string;
   private _annualIncomeTaxExplanation: string;
-  private _annualNetIncome: number;
+  private _annualEffectiveTaxRateExplanation: string;
+  private _annualNetIncome: BigNumber;
   private _annualNetIncomeExplanation: string;
 
+  private readonly money = (amount: BigNumber.Value) =>
+    new BigNumber(amount).decimalPlaces(2, BigNumber.ROUND_HALF_UP);
+
   constructor(monthlyBasicIncome: number) {
-    this.monthlyBasicIncome = Math.max(monthlyBasicIncome, 0);
+    this.monthlyBasicIncome = this.money(Math.max(monthlyBasicIncome, 0));
     this.monthlySss = this.getMonthlySss();
     this.monthlyPhilHealth = this.getMonthlyPhilHealth();
     this.monthlyPagIbig = this.getMonthlyPagIbig();
     this.monthlyDeductions =
-      this.monthlySss + this.monthlyPhilHealth + this.monthlyPagIbig;
-    this.monthlyTaxableIncome = Math.max(
-      this.monthlyBasicIncome - this.monthlyDeductions,
+      this.monthlySss.plus(this.monthlyPhilHealth).plus(this.monthlyPagIbig);
+    this.monthlyTaxableIncome = BigNumber.max(
+      this.monthlyBasicIncome.minus(this.monthlyDeductions),
       0
-    );
+    ).decimalPlaces(2, BigNumber.ROUND_HALF_UP);
 
-    this.annualGrossIncome = this.monthlyBasicIncome * 12;
-    this.annualDeductions = this.monthlyDeductions * 12;
-    this.annualTaxableIncome = this.monthlyTaxableIncome * 12;
+    this.annualGrossIncome = this.money(this.monthlyBasicIncome.multipliedBy(12));
+    this.annualDeductions = this.money(this.monthlyDeductions.multipliedBy(12));
+    this.annualTaxableIncome = this.money(
+      this.monthlyTaxableIncome.multipliedBy(12)
+    );
     this.taxBracket = this.getTaxBracket();
-    this.excessOver = this.taxBracket.bounds.inclusiveLower - 1;
-    this.excess = this.annualTaxableIncome - this.excessOver;
+    this.excessOver = this.money(this.taxBracket.bounds.inclusiveLower).minus(1);
+    this.excess = this.money(this.annualTaxableIncome.minus(this.excessOver));
 
     this._annualIncomeTax = this.getAnnualIncomeTax();
-    this.monthlyIncomeTax = this._annualIncomeTax / 12;
-    this.monthlyTakeHomePay = Math.max(
-      this.monthlyBasicIncome - this.monthlyDeductions - this.monthlyIncomeTax,
+    this.annualEffectiveTaxRate = this.getAnnualEffectiveTaxRate();
+    this.monthlyIncomeTax = this.money(this._annualIncomeTax.dividedBy(12));
+    this.monthlyTakeHomePay = BigNumber.max(
+      this.monthlyBasicIncome
+        .minus(this.monthlyDeductions)
+        .minus(this.monthlyIncomeTax),
       0
-    );
+    ).decimalPlaces(2, BigNumber.ROUND_HALF_UP);
     this._annualIncomeTaxExplanation = this.getAnnualIncomeTaxExplanation();
     this._annualNetIncome = this.getAnnualNetIncome();
 
@@ -85,6 +96,8 @@ export class TaxCalculator {
     this._annualDeductionsExplanation = this.getAnnualDeductionsExplanation();
     this._annualTaxableIncomeExplanation =
       this.getannualTaxableIncomeExplanation();
+    this._annualEffectiveTaxRateExplanation =
+      this.getAnnualEffectiveTaxRateExplanation();
     this._annualNetIncomeExplanation = this.getAnnualNetIncomeExaplanation();
   }
 
@@ -136,6 +149,10 @@ export class TaxCalculator {
     return this._annualIncomeTaxExplanation;
   }
 
+  public get annualEffectiveTaxRateExplanation() {
+    return this._annualEffectiveTaxRateExplanation;
+  }
+
   public get annualNetIncome() {
     return this._annualNetIncome;
   }
@@ -147,8 +164,9 @@ export class TaxCalculator {
   private getTaxBracket = () => {
     const taxBracket = TAX_BRACKETS.find(
       ({ bounds: { inclusiveLower, inclusiveUpper } }) =>
-        this.annualTaxableIncome >= inclusiveLower &&
-        this.annualTaxableIncome <= inclusiveUpper
+        this.annualTaxableIncome.isGreaterThanOrEqualTo(inclusiveLower) &&
+        (inclusiveUpper === Infinity ||
+          this.annualTaxableIncome.isLessThanOrEqualTo(inclusiveUpper))
     );
     if (!taxBracket) throw new Error('Cannot find tax rate.');
     return taxBracket;
@@ -173,7 +191,10 @@ export class TaxCalculator {
     const fmtExcessTaxRate = `${excessTaxRate * 100}%`;
     const fmtExcess = formatPhpCurrency(this.excess);
     const fmtIncomeTax = formatPhpCurrency(this._annualIncomeTax);
-    const fmtVariableTax = formatPhpCurrency(this.excess * excessTaxRate);
+    const fmtAnnualEffectiveTaxRate = `${this.annualEffectiveTaxRate.toFixed(2)}%`;
+    const fmtVariableTax = formatPhpCurrency(
+      this.excess.multipliedBy(excessTaxRate)
+    );
     const fmtNetIncome = formatPhpCurrency(this._annualNetIncome);
     return {
       fmtMonthlyBasicIncome,
@@ -193,20 +214,21 @@ export class TaxCalculator {
       fmtExcessTaxRate,
       fmtExcess,
       fmtIncomeTax,
+      fmtAnnualEffectiveTaxRate,
       fmtVariableTax,
       fmtNetIncome,
     };
   };
 
   private getMonthlySss() {
-    return this.getSssBracket().employeeTotal;
+    return this.money(this.getSssBracket().employeeTotal);
   }
 
   private getSssBracket() {
     const sssBracket = SSS_BRACKETS.find(
       ({ minSalary, maxSalary }) =>
-        this.monthlyBasicIncome >= minSalary &&
-        this.monthlyBasicIncome <= maxSalary
+        this.monthlyBasicIncome.isGreaterThanOrEqualTo(minSalary) &&
+        (maxSalary === Infinity || this.monthlyBasicIncome.isLessThanOrEqualTo(maxSalary))
     );
     if (!sssBracket) throw new Error('Cannot find SSS bracket.');
     return sssBracket;
@@ -214,14 +236,17 @@ export class TaxCalculator {
 
   private getMonthlyPhilHealth() {
     // Employee share approximation: 2.5% of salary (half of 5% premium), floor 10k, cap 100k.
-    const contributionBase = Math.min(Math.max(this.monthlyBasicIncome, 10_000), 100_000);
-    return contributionBase * 0.025;
+    const contributionBase = BigNumber.min(
+      BigNumber.max(this.monthlyBasicIncome, this.money(10_000)),
+      this.money(100_000)
+    );
+    return this.money(contributionBase.multipliedBy(0.025));
   }
 
   private getMonthlyPagIbig() {
     // Employee share: 2% up to a maximum monthly contribution of 100.
-    const contributionBase = Math.min(this.monthlyBasicIncome, 10_000); // Cap at 10k for Pag-IBIG
-    return contributionBase * 0.02;
+    const contributionBase = BigNumber.min(this.monthlyBasicIncome, this.money(10_000));
+    return this.money(contributionBase.multipliedBy(0.02));
   }
 
   private getMonthlySssExplanation() {
@@ -345,8 +370,25 @@ export class TaxCalculator {
 
   private getAnnualIncomeTax() {
     const { fixedTax, excessTaxRate } = this.taxBracket;
-    const tax = fixedTax + this.excess * excessTaxRate;
-    return tax;
+    const tax = this.excess.multipliedBy(excessTaxRate).plus(fixedTax);
+    return this.money(tax);
+  }
+
+  private getAnnualEffectiveTaxRate() {
+    if (this.annualGrossIncome.isZero()) return this.money(0);
+    return this.money(
+      this._annualIncomeTax.dividedBy(this.annualGrossIncome).multipliedBy(100)
+    );
+  }
+
+  private getAnnualEffectiveTaxRateExplanation() {
+    const { fmtAnnualGrossIncome, fmtIncomeTax, fmtAnnualEffectiveTaxRate } =
+      this.getfmtValues();
+    return `
+      Effective tax rate is annual income tax divided by annual gross income.
+      <br/>
+      So, ${fmtIncomeTax} / ${fmtAnnualGrossIncome} = ${fmtAnnualEffectiveTaxRate}.
+    `;
   }
 
   private getAnnualIncomeTaxExplanation() {
@@ -412,7 +454,11 @@ export class TaxCalculator {
   }
 
   private getAnnualNetIncome() {
-    return this.annualGrossIncome - this.annualDeductions - this._annualIncomeTax;
+    return this.money(
+      this.annualGrossIncome
+        .minus(this.annualDeductions)
+        .minus(this._annualIncomeTax)
+    );
   }
 
   private getAnnualNetIncomeExaplanation() {

@@ -23,6 +23,7 @@
     "@mui/x-date-pickers": "^6.19.6",
     "aws-amplify": "^6.0.20",
     "axios": "^1.6.8",
+    "bignumber.js": "^11.1.4",
     "chart.js": "^4.4.2",
     "cookies-next": "^4.1.1",
     "jotai": "^2.7.1",

@@ -9,15 +9,15 @@ export const getHelpLink = (attribute: RESULT_ATTRIBUTES) => {
       };
     case RESULT_ATTRIBUTES.ANNUAL_INCOME_TAX:
       return {
-        link: 'https://www.bir.gov.ph/income-tax',
+        link: 'https://www.bir.gov.ph/tax-code',
         displayText:
-          'More info: BIR Tax Rate (scroll down to INCOME TAX RATES)',
+          'Scroll into Chapter 3 (Tax on Individuals) > Section 24 (Income Tax Rates) > A (Rates of Income Tax on Individual Citizen and Individual Resident Alien of the Philippines) > 2 ( Rates of Tax on Taxable Income of Individuals)',
       };
     case RESULT_ATTRIBUTES.ANNUAL_TAXABLE_INCOME:
       return {
-        link: 'https://www.bir.gov.ph/income-tax',
+        link: 'https://www.bir.gov.ph/tax-code',
         displayText:
-          'More info: See FAQS - What are some of the exclusions from gross income?',
+          'Scroll into Chapter 3 (Tax on Individuals) > Section 24 (Income Tax Rates) > A (Rates of Income Tax on Individual Citizen and Individual Resident Alien of the Philippines) > 2 ( Rates of Tax on Taxable Income of Individuals)',
       };
     default:
       undefined;

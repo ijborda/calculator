@@ -11,5 +11,6 @@ export enum RESULT_ATTRIBUTES {
   ANNUAL_DEDUCTIONS = 'Annual Deductions',
   ANNUAL_TAXABLE_INCOME = 'Annual Taxable Income',
   ANNUAL_INCOME_TAX = 'Annual Income Tax',
+  ANNUAL_EFFECTIVE_TAX_RATE = 'Effective Tax Rate',
   ANNUAL_NET_INCOME = 'Annual Net Income',
 }
