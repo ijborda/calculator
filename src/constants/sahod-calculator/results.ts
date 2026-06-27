@@ -1,4 +1,9 @@
 export enum RESULT_ATTRIBUTES {
+  ANNUAL_INCOME = 'Annual Income',
+  ANNUAL_BONUSES_AND_ALLOWANCES = 'Annual Bonuses and Allowances',
+  ANNUAL_SSS = 'Annual SSS',
+  ANNUAL_PHILHEALTH = 'Annual PhilHealth',
+  ANNUAL_PAG_IBIG = 'Annual Pag-IBIG',
   MONTHLY_BASIC_INCOME = 'Monthly Basic Income',
   MONTHLY_SSS = 'Monthly SSS',
   MONTHLY_PHILHEALTH = 'Monthly PhilHealth',
